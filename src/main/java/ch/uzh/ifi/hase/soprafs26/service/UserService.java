@@ -40,7 +40,7 @@ public class UserService {
 
 	public User createUser(User newUser) {
 		newUser.setToken(UUID.randomUUID().toString());
-		newUser.setStatus(UserStatus.OFFLINE);
+		newUser.setStatus(UserStatus.ONLINE);
 		checkIfUserExists(newUser);
 		// saves the given entity but data is only persisted in the database once
 		// flush() is called
@@ -51,6 +51,46 @@ public class UserService {
 		return newUser;
 	}
 
+
+		public User loginUser(User userCredentials){
+		//look and find by username
+		User existingUser = userRepository.findByUsername(userCredentials.getUsername());
+		//throw an error if we can't find the user
+		if (existingUser == null){
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Error: Username not found");
+		}
+		//check the password
+		if(!existingUser.getPassword().equals(userCredentials.getPassword())){
+			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Error: Wrong password"); 
+		//login if everything is good
+		existingUser.setStatus(UserStatus.ONLINE); //set status to online
+		userRepository.flush();
+
+		return existingUser;
+	}
+
+	public boolean verifyToken(String token) {
+    if (token == null || token.isEmpty()) {
+        return false;
+    }
+    User user = userRepository.findByToken(token);
+    return user != null;
+}
+	public User getUserByToken(String token) {
+		if (token == null || token.isEmpty()) {
+			return null;
+		}
+		return userRepository.findByToken(token);
+	}
+
+	public void setUserStatus(String token) {
+		User user = userRepository.findByToken(token);
+		if (user != null) {
+			user.setStatus(UserStatus.OFFLINE);
+			userRepository.save(user);
+			userRepository.flush();
+		}
+	}
 	/**
 	 * This is a helper method that will check the uniqueness criteria of the
 	 * username and the name
@@ -63,16 +103,10 @@ public class UserService {
 	 */
 	private void checkIfUserExists(User userToBeCreated) {
 		User userByUsername = userRepository.findByUsername(userToBeCreated.getUsername());
-		User userByName = userRepository.findByName(userToBeCreated.getName());
-
 		String baseErrorMessage = "The %s provided %s not unique. Therefore, the user could not be created!";
-		if (userByUsername != null && userByName != null) {
+		if (userByUsername != null) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
 					String.format(baseErrorMessage, "username and the name", "are"));
-		} else if (userByUsername != null) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format(baseErrorMessage, "username", "is"));
-		} else if (userByName != null) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format(baseErrorMessage, "name", "is"));
-		}
+		} 
 	}
 }
