@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import ch.uzh.ifi.hase.soprafs26.constant.UserStatus;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * Internal User Representation
@@ -37,6 +38,15 @@ public class User implements Serializable {
 
 	@Column(nullable = false)
 	private UserStatus status;
+
+    @ManyToMany
+    private List<Project> projects;
+
+    @OneToMany
+    private List<Project> ownedProjects;
+
+    @OneToMany
+    private List<Task> tasks;
 
 	public Long getId() {
 		return id;
