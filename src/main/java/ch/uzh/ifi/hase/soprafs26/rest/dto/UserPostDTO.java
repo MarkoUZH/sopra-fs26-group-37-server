@@ -10,6 +10,8 @@ public class UserPostDTO {
 
 	private String password;
 
+	private boolean manager;
+
 	public String getEmail() {
 		return email;
 	}
@@ -18,7 +20,7 @@ public class UserPostDTO {
 		this.email = email;
 	}
 
-	public String getUsername() x{
+	public String getUsername() {
 		return username;
 	}
 
@@ -40,5 +42,12 @@ public class UserPostDTO {
 
 	public void setLanguage(String language) {
 		this.language = language;
+	}
+
+	public boolean getManager() {
+		return manager;
+	}
+	public void setManager(boolean manager) {
+		this.manager = manager;
 	}
 }

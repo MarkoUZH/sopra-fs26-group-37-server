@@ -44,6 +44,8 @@ public class User implements Serializable {
 	@Column(nullable = false)
 	private String language;
 	
+	@Column(nullable = false)
+	private boolean manager;
 
 	public Long getId() {
 		return id;
@@ -99,5 +101,11 @@ public class User implements Serializable {
 
 	public void setLanguage(String language) {
 		this.language = language;
+	}
+	public boolean getManager() {
+		return manager;
+	}
+	public void setManager(boolean manager) {
+		this.manager = manager;
 	}
 }
