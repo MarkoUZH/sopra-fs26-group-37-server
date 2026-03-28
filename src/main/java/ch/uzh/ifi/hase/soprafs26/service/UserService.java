@@ -51,7 +51,21 @@ public class UserService {
 		return newUser;
 	}
 
+		public User loginUser(User userCredentials){
+		//look and find by username
+		User existingUser = userRepository.findByUsername(userCredentials.getUsername());
+		//throw an error if we can't find the user
+		if (existingUser == null){
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Error: Username not found");
+		}
+		//check the password
+		if(!existingUser.getPassword().equals(userCredentials.getPassword())){
+			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Error: Wrong password"); }
+		//login if everything is good
+		existingUser.setStatus(UserStatus.ONLINE); //set status to online
+		userRepository.flush();
 
+		return existingUser;}
 	
 
 	public boolean verifyToken(String token) {

@@ -58,4 +58,22 @@ public class UserController {
 		return DTOMapper.INSTANCE.convertEntityToUserGetDTO(createdUser);
 	}
 
+	
+	@PostMapping("/login")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public ResponseEntity<?> login(@RequestBody UserPostDTO userPostDTO) {
+        try {
+            // Authenticate user with the provided credentials
+            User authenticatedUser = userService.loginUser(DTOMapper.INSTANCE.convertUserPostDTOtoEntity(userPostDTO));
+			return ResponseEntity.ok(DTOMapper.INSTANCE.convertEntityToUserGetDTO(authenticatedUser));
+        } catch (ResponseStatusException e) {
+			// Handle the case where the user is not found
+			throw e;
+		}
+		catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error during login");
+        }
+    }
+
 }
