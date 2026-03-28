@@ -45,6 +45,18 @@ public class UserController {
 		return userGetDTOs;
 	}
 
+@GetMapping("/users/{id}")
+@ResponseStatus(HttpStatus.OK)
+@ResponseBody
+public UserGetDTO getUser(@PathVariable("id") Long id) {
+    // Standard JPA method: findById returns an Optional
+    User user = userService.getUserById(id);
+	if (user == null) {
+		throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+	}
+    return DTOMapper.INSTANCE.convertEntityToUserGetDTO(user);
+}
+
 	@PostMapping("/users")
 	@ResponseStatus(HttpStatus.CREATED)
 	@ResponseBody

@@ -82,6 +82,11 @@ public class UserService {
 		return userRepository.findByToken(token);
 	}
 
+	public User getUserById(Long id) {
+		return userRepository.findById(id)
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+	}
+
 	public void setUserStatus(String token) {
 		User user = userRepository.findByToken(token);
 		if (user != null) {
