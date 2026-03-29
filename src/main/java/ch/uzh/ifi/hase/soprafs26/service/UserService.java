@@ -95,6 +95,14 @@ public class UserService {
 			userRepository.flush();
 		}
 	}
+
+	public void logoutById(Long id) {
+    User user = userRepository.findById(id)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+    user.setStatus(UserStatus.OFFLINE);
+    userRepository.save(user);
+    userRepository.flush();
+}
 	/**
 	 * This is a helper method that will check the uniqueness criteria of the
 	 * username and the name

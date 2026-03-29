@@ -88,4 +88,12 @@ public UserGetDTO getUser(@PathVariable("id") Long id) {
         }
     }
 
+
+	@PutMapping("/logout/{id}")
+@ResponseStatus(HttpStatus.NO_CONTENT)
+@ResponseBody
+public void logoutUser(@PathVariable("id") Long id) {
+    userService.logoutById(id);
 }
+}
+
