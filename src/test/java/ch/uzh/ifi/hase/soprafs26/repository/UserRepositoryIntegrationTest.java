@@ -26,6 +26,10 @@ public class UserRepositoryIntegrationTest {
 		User user = new User();
 		user.setUsername("firstname@lastname");
 		user.setStatus(UserStatus.OFFLINE);
+        user.setPassword("password");
+        user.setEmail("test@email.com");
+        user.setManager(false);
+        user.setLanguage("German");
 		user.setToken("1");
 
 		entityManager.persist(user);
@@ -39,5 +43,9 @@ public class UserRepositoryIntegrationTest {
 		assertEquals(found.getUsername(), user.getUsername());
 		assertEquals(found.getToken(), user.getToken());
 		assertEquals(found.getStatus(), user.getStatus());
+		assertEquals(found.getEmail(), user.getEmail());
+		assertEquals(found.getLanguage(), user.getLanguage());
+		assertEquals(found.getPassword(), user.getPassword());
+		assertEquals(found.getManager(), user.getManager());
 	}
 }
