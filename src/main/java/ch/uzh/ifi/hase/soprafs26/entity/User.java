@@ -28,7 +28,7 @@ public class User implements Serializable {
 	private Long id;
 
 	@Column(nullable = false)
-	private String name;
+	private String email;
 
 	@Column(nullable = false, unique = true)
 	private String username;
@@ -39,14 +39,23 @@ public class User implements Serializable {
 	@Column(nullable = false)
 	private UserStatus status;
 
-    @ManyToMany
-    private List<Project> projects;
+  @ManyToMany
+  private List<Project> projects;
 
-    @OneToMany
-    private List<Project> ownedProjects;
+  @OneToMany
+  private List<Project> ownedProjects;
 
-    @OneToMany
-    private List<Task> tasks;
+  @OneToMany
+  private List<Task> tasks;
+  
+	@Column(nullable = false)
+	private String password;
+
+	@Column(nullable = false)
+	private String language;
+	
+	@Column(nullable = false)
+	private boolean manager;
 
 	public Long getId() {
 		return id;
@@ -56,12 +65,12 @@ public class User implements Serializable {
 		this.id = id;
 	}
 
-	public String getName() {
-		return name;
+	public String getEmail() {
+		return email;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 	public String getUsername() {
@@ -86,5 +95,27 @@ public class User implements Serializable {
 
 	public void setStatus(UserStatus status) {
 		this.status = status;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getLanguage() {
+		return language;
+	}
+
+	public void setLanguage(String language) {
+		this.language = language;
+	}
+	public boolean getManager() {
+		return manager;
+	}
+	public void setManager(boolean manager) {
+		this.manager = manager;
 	}
 }

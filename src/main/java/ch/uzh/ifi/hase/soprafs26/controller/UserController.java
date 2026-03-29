@@ -1,7 +1,9 @@
-package ch.uzh.ifi.hase.soprafs26.controller;
+	package ch.uzh.ifi.hase.soprafs26.controller;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import ch.uzh.ifi.hase.soprafs26.entity.User;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.UserGetDTO;
@@ -43,6 +45,18 @@ public class UserController {
 		return userGetDTOs;
 	}
 
+@GetMapping("/users/{id}")
+@ResponseStatus(HttpStatus.OK)
+@ResponseBody
+public UserGetDTO getUser(@PathVariable("id") Long id) {
+    // Standard JPA method: findById returns an Optional
+    User user = userService.getUserById(id);
+	if (user == null) {
+		throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+	}
+    return DTOMapper.INSTANCE.convertEntityToUserGetDTO(user);
+}
+
 	@PostMapping("/users")
 	@ResponseStatus(HttpStatus.CREATED)
 	@ResponseBody
@@ -55,4 +69,23 @@ public class UserController {
 		// convert internal representation of user back to API
 		return DTOMapper.INSTANCE.convertEntityToUserGetDTO(createdUser);
 	}
+
+	
+	@PostMapping("/login")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public ResponseEntity<?> login(@RequestBody UserPostDTO userPostDTO) {
+        try {
+            // Authenticate user with the provided credentials
+            User authenticatedUser = userService.loginUser(DTOMapper.INSTANCE.convertUserPostDTOtoEntity(userPostDTO));
+			return ResponseEntity.ok(DTOMapper.INSTANCE.convertEntityToUserGetDTO(authenticatedUser));
+        } catch (ResponseStatusException e) {
+			// Handle the case where the user is not found
+			throw e;
+		}
+		catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error during login");
+        }
+    }
+
 }
