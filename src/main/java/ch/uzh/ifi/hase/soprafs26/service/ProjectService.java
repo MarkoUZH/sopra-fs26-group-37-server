@@ -67,10 +67,24 @@ public class ProjectService {
         projectRepository.save(updatedProject);
         return updatedProject;
     }
-
     public List<Project> getProjectsByUserId(Long userId) {
-    User user = userService.getUserById(userId);
-    List<Project> allProjects = new ArrayList<>(user.getOwnedProjects());
-    return allProjects;
-}
+        User user = userService.getUserById(userId);
+        
+        // 1. Get projects where user is the OWNER
+        List<Project> allProjects = new ArrayList<>(user.getOwnedProjects());
+        
+        // 2. Get projects where user is a MEMBER (the ManyToMany side)
+        List<Project> memberProjects = user.getProjects();
+
+        if (memberProjects != null) {
+            for (Project project : memberProjects) {
+                // Only add if it's not already in the list (prevents duplicates if owner is also a member)
+                if (!allProjects.contains(project)) {
+                    allProjects.add(project);
+                }
+            }
+        }
+        
+        return allProjects;
+    }
 }
