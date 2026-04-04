@@ -35,6 +35,21 @@ public class ProjectController {
 		return projectGetDTOS;
 	}
 
+    @GetMapping("/projects/users/{userId}")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public List<ProjectGetDTO> getProjectsByUserId(@PathVariable Long userId) {
+        List<Project> projects = projectService.getProjectsByUserId(userId);
+        List<ProjectGetDTO> projectGetDTOS = new ArrayList<>();
+
+        for (Project project : projects) {
+            projectGetDTOS.add(ProjectDTOMapper.INSTANCE.convertEntityToProjectGetDTO(project));
+        }
+        return projectGetDTOS;
+    }
+
+
+
     @PostMapping("/projects")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
@@ -60,18 +75,7 @@ public class ProjectController {
         }
     }
 
-    @GetMapping("/projects")
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    public List<ProjectGetDTO> getProjectsByUserId(@RequestParam(value = "userId") Long userId) {
-        List<Project> projects = projectService.getProjectsByUserId(userId);
-        List<ProjectGetDTO> projectGetDTOS = new ArrayList<>();
 
-        for (Project project : projects) {
-            projectGetDTOS.add(ProjectDTOMapper.INSTANCE.convertEntityToProjectGetDTO(project));
-        }
-        return projectGetDTOS;
-    }
 
     @DeleteMapping("/projects/{id}")
     @ResponseStatus(HttpStatus.OK)
