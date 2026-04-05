@@ -22,9 +22,11 @@ public class Task {
     private float timeEstimate;
     @ManyToOne
     private Sprint sprint;
+    @ManyToOne
+    private Project project;
     private String acceptanceCriteria;
 
-    public Task(String name, String description, List<Tag> tags, List<User> assignedUsers, Priority priority, LocalDateTime dueDate, float timeEstimate, Sprint sprint, String acceptanceCriteria) {
+    public Task(String name, String description, List<Tag> tags, List<User> assignedUsers, Priority priority, LocalDateTime dueDate, float timeEstimate, Sprint sprint, Project project, String acceptanceCriteria) {
         this.name = name;
         this.description = description;
         this.tags = tags;
@@ -33,6 +35,7 @@ public class Task {
         this.dueDate = dueDate;
         this.timeEstimate = timeEstimate;
         this.sprint = sprint;
+        this.project = project;
         this.acceptanceCriteria = acceptanceCriteria;
     }
 
@@ -118,5 +121,13 @@ public class Task {
 
     public void setAcceptanceCriteria(String acceptanceCriteria) {
         this.acceptanceCriteria = acceptanceCriteria;
+    }
+
+    public Project getProject() {
+        return project;
+    }
+
+    public void setProject(Project project) {
+        this.project = project;
     }
 }
