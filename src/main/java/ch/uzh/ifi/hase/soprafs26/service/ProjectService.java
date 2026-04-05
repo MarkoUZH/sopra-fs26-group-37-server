@@ -36,8 +36,21 @@ public class ProjectService {
     	return projectRepository.findAll();
     }
 
-    public Project createProject(Project project)
-    {
+    public Project createProject(Project project, List<Long> memberIds, Long ownerId)
+    {if (ownerId != null) {
+        User owner = userService.getUserById(ownerId);
+        project.setOwner(owner);
+    }
+
+    // 2. Link the Members
+    if (memberIds != null && !memberIds.isEmpty()) {
+        List<User> members = new ArrayList<>();
+        for (Long id : memberIds) {
+            User member = userService.getUserById(id);
+            members.add(member);
+        }
+        project.setMembers(members);
+    }
     	return projectRepository.save(project);
     }
 

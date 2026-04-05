@@ -55,8 +55,9 @@ public class ProjectController {
     @ResponseBody
     public ProjectGetDTO createProject(@RequestBody ProjectPostDTO projectPostDTO) {
         Project projectInput = ProjectDTOMapper.INSTANCE.convertProjectPostDTOtoEntity(projectPostDTO);
-
-        Project createdProject = projectService.createProject(projectInput);
+        List<Long> memberIds = projectPostDTO.getMemberIds();
+            Long ownerId = projectPostDTO.getOwnerId();
+        Project createdProject = projectService.createProject(projectInput, memberIds, ownerId);
 
         return ProjectDTOMapper.INSTANCE.convertEntityToProjectGetDTO(createdProject);
     }

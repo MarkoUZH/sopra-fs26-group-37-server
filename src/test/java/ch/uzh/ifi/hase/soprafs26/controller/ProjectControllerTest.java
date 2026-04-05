@@ -62,30 +62,36 @@ public class ProjectControllerTest {
     }
 
     @Test
-    public void createProject_validInput_projectCreated() throws Exception {
-        // given
-        Project project = new Project();
-        project.setId(1L);
-        project.setName("Test Project");
-        project.setDescription("Test Description");
+public void createProject_validInput_projectCreated() throws Exception {
+    // given
+    Project project = new Project();
+    project.setId(1L);
+    project.setName("Test Project");
+    project.setDescription("Test Description");
 
-        ProjectPostDTO projectPostDTO = new ProjectPostDTO();
-        project.setName("Test Project");
-        project.setDescription("Test Description");
+    // Populate the DTO with the fields your controller now expects
+    ProjectPostDTO projectPostDTO = new ProjectPostDTO();
+    projectPostDTO.setName("Test Project");
+    projectPostDTO.setDescription("Test Description");
+    projectPostDTO.setOwnerId(1L);
+    projectPostDTO.setMemberIds(Collections.singletonList(2L));
 
-        given(projectService.createProject(Mockito.any())).willReturn(project);
+    // Update the mock to match the 3-argument method signature in your Service
+    given(projectService.createProject(Mockito.any(), Mockito.any(), Mockito.any()))
+            .willReturn(project);
 
-        // when/then -> do the request + validate the result
-        MockHttpServletRequestBuilder postRequest = post("/projects").contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(projectPostDTO));
+    // when
+    MockHttpServletRequestBuilder postRequest = post("/projects")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(asJsonString(projectPostDTO));
 
-        // then
-        mockMvc.perform(postRequest)
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id", is(project.getId().intValue())))
-                .andExpect(jsonPath("$.name", is(project.getName())))
-                .andExpect(jsonPath("$.description", is(project.getDescription())));
-    }
+    // then
+    mockMvc.perform(postRequest)
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.id", is(project.getId().intValue())))
+            .andExpect(jsonPath("$.name", is(project.getName())))
+            .andExpect(jsonPath("$.description", is(project.getDescription())));
+}
 
     @Test
     public void givenProjects_whenGetProject_thenReturnJsonArray() throws Exception {
