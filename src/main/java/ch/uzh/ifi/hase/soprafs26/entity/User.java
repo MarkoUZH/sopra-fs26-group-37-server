@@ -39,13 +39,13 @@ public class User implements Serializable {
 	@Column(nullable = false)
 	private UserStatus status;
 
-  @ManyToMany
+  @ManyToMany(mappedBy = "members")
   private List<Project> projects;
 
-  @OneToMany
+  @OneToMany(mappedBy = "owner")
   private List<Project> ownedProjects;
 
-  @OneToMany
+  @OneToMany(mappedBy = "assignedUsers")
   private List<Task> tasks;
   
 	@Column(nullable = false)
@@ -118,4 +118,30 @@ public class User implements Serializable {
 	public void setManager(boolean manager) {
 		this.manager = manager;
 	}
+
+
+    public List<Project> getProjects() {
+        return projects;
+    }
+
+    public void setProjects(List<Project> projects) {
+        this.projects = projects;
+    }
+
+    public List<Project> getOwnedProjects() {
+        return ownedProjects;
+    }
+
+    public void setOwnedProjects(List<Project> ownedProjects) {
+        this.ownedProjects = ownedProjects;
+    }
+
+    public List<Task> getTasks() {
+        return tasks;
+    }
+
+    public void setTasks(List<Task> tasks) {
+        this.tasks = tasks;
+    }
+
 }

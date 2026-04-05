@@ -16,8 +16,14 @@ public class Project {
     @OneToMany
     private List<Task> tasks;
     @ManyToOne
+    @JoinColumn(name = "owner_id")
     private User owner;
     @ManyToMany
+    @JoinTable(
+            name = "project_members",
+            joinColumns = @JoinColumn(name = "project_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
     private List<User> members;
     @OneToMany
     private List<Sprint> sprints;

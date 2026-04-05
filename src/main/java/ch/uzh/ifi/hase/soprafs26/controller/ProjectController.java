@@ -35,13 +35,29 @@ public class ProjectController {
 		return projectGetDTOS;
 	}
 
+    @GetMapping("/projects/users/{userId}")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public List<ProjectGetDTO> getProjectsByUserId(@PathVariable Long userId) {
+        List<Project> projects = projectService.getProjectsByUserId(userId);
+        List<ProjectGetDTO> projectGetDTOS = new ArrayList<>();
+
+        for (Project project : projects) {
+            projectGetDTOS.add(ProjectDTOMapper.INSTANCE.convertEntityToProjectGetDTO(project));
+        }
+        return projectGetDTOS;
+    }
+
+
+
     @PostMapping("/projects")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
     public ProjectGetDTO createProject(@RequestBody ProjectPostDTO projectPostDTO) {
         Project projectInput = ProjectDTOMapper.INSTANCE.convertProjectPostDTOtoEntity(projectPostDTO);
-
-        Project createdProject = projectService.createProject(projectInput);
+        List<Long> memberIds = projectPostDTO.getMemberIds();
+            Long ownerId = projectPostDTO.getOwnerId();
+        Project createdProject = projectService.createProject(projectInput, memberIds, ownerId);
 
         return ProjectDTOMapper.INSTANCE.convertEntityToProjectGetDTO(createdProject);
     }
@@ -59,6 +75,8 @@ public class ProjectController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Project with id " + id + " does not exist");
         }
     }
+
+
 
     @DeleteMapping("/projects/{id}")
     @ResponseStatus(HttpStatus.OK)
