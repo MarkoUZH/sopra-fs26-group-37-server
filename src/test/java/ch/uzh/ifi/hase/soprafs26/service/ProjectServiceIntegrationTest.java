@@ -37,7 +37,7 @@ public class ProjectServiceIntegrationTest {
 	}
 
 	@Test
-	public void createUser_validInputs_success() {
+	public void createProject_validInputs_success() {
 		// given
 		assertFalse(projectRepository.findById(1L).isPresent());
 
