@@ -6,6 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 import ch.uzh.ifi.hase.soprafs26.constant.UserStatus;
@@ -50,20 +51,7 @@ public class UserServiceTest {
 		assertEquals(testUser.getId(), createdUser.getId());
 		assertEquals(testUser.getUsername(), createdUser.getUsername());
 		assertNotNull(createdUser.getToken());
-		assertEquals(UserStatus.OFFLINE, createdUser.getStatus());
-	}
-
-	@Test
-	public void createUser_duplicateName_throwsException() {
-		// given -> a first user has already been created
-		userService.createUser(testUser);
-
-		// when -> setup additional mocks for UserRepository
-		Mockito.when(userRepository.findByUsername(Mockito.any())).thenReturn(null);
-
-		// then -> attempt to create second user with same user -> check that an error
-		// is thrown
-		assertThrows(ResponseStatusException.class, () -> userService.createUser(testUser));
+		assertEquals(UserStatus.ONLINE, createdUser.getStatus());
 	}
 
 	@Test
@@ -77,6 +65,29 @@ public class UserServiceTest {
 		// then -> attempt to create second user with same user -> check that an error
 		// is thrown
 		assertThrows(ResponseStatusException.class, () -> userService.createUser(testUser));
+	}
+
+	@Test
+	public void loginUser_invalidPassword_throwsException() {
+		// given
+		User existingUser = new User();
+		existingUser.setUsername("testUsername");
+		existingUser.setPassword("correctPassword");
+
+		User loginAttempt = new User();
+		loginAttempt.setUsername("testUsername");
+		loginAttempt.setPassword("wrongPassword");
+
+		// Mock: findByUsername returns the user, but the passwords won't match
+		Mockito.when(userRepository.findByUsername("testUsername")).thenReturn(existingUser);
+
+		// then -> attempt to login with wrong password -> check for 401 UNAUTHORIZED
+		ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> {
+			userService.loginUser(loginAttempt);
+		});
+
+		assertEquals(HttpStatus.UNAUTHORIZED, exception.getStatusCode());
+		assertTrue(exception.getReason().contains("Wrong password"));
 	}
 
 }

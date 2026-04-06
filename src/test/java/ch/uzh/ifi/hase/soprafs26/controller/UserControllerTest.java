@@ -47,54 +47,53 @@ public class UserControllerTest {
 	private UserService userService;
 
 	@Test
-	public void givenUsers_whenGetUsers_thenReturnJsonArray() throws Exception {
-		// given
-		User user = new User();
-		user.setUsername("firstname@lastname");
-		user.setStatus(UserStatus.OFFLINE);
+public void createUser_duplicateUsername_throwsConflict() throws Exception {
+    // given
+    UserPostDTO userPostDTO = new UserPostDTO();
+    userPostDTO.setUsername("existingUser");
 
-		List<User> allUsers = Collections.singletonList(user);
+    // Mock the service to throw an exception when this username is used
+    given(userService.createUser(Mockito.any()))
+        .willThrow(new ResponseStatusException(HttpStatus.CONFLICT, "The username provided is not unique"));
 
-		// this mocks the UserService -> we define above what the userService should
-		// return when getUsers() is called
-		given(userService.getUsers()).willReturn(allUsers);
+    // when
+    MockHttpServletRequestBuilder postRequest = post("/users")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(asJsonString(userPostDTO));
 
-		// when
-		MockHttpServletRequestBuilder getRequest = get("/users").contentType(MediaType.APPLICATION_JSON);
+    // then
+    mockMvc.perform(postRequest)
+            .andExpect(status().isConflict()); // Expect 409
+}
 
-		// then
-		mockMvc.perform(getRequest).andExpect(status().isOk())
-				.andExpect(jsonPath("$", hasSize(1)))
-				.andExpect(jsonPath("$[0].username", is(user.getUsername())))
-				.andExpect(jsonPath("$[0].status", is(user.getStatus().toString())));
-	}
 
-	@Test
-	public void createUser_validInput_userCreated() throws Exception {
-		// given
-		User user = new User();
-		user.setId(1L);
-		user.setUsername("testUsername");
-		user.setToken("1");
-		user.setStatus(UserStatus.ONLINE);
+@Test
+public void login_validCredentials_returnUser() throws Exception {
+    // given
+    User user = new User();
+    user.setId(1L);
+    user.setUsername("loginUser");
+    user.setStatus(UserStatus.ONLINE);
 
-		UserPostDTO userPostDTO = new UserPostDTO();
-		userPostDTO.setUsername("testUsername");
+    UserPostDTO loginDTO = new UserPostDTO();
+    loginDTO.setUsername("loginUser");
+    // Assuming password or other fields are in UserPostDTO
 
-		given(userService.createUser(Mockito.any())).willReturn(user);
+    // Mock the service to return the authenticated user
+    given(userService.loginUser(Mockito.any())).willReturn(user);
 
-		// when/then -> do the request + validate the result
-		MockHttpServletRequestBuilder postRequest = post("/users")
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(asJsonString(userPostDTO));
+    // when
+    MockHttpServletRequestBuilder postRequest = post("/login")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(asJsonString(loginDTO));
 
-		// then
-		mockMvc.perform(postRequest)
-				.andExpect(status().isCreated())
-				.andExpect(jsonPath("$.id", is(user.getId().intValue())))
-				.andExpect(jsonPath("$.username", is(user.getUsername())))
-				.andExpect(jsonPath("$.status", is(user.getStatus().toString())));
-	}
+    // then
+    mockMvc.perform(postRequest)
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id", is(user.getId().intValue())))
+            .andExpect(jsonPath("$.username", is(user.getUsername())))
+            .andExpect(jsonPath("$.status", is(user.getStatus().toString())));
+}
 
 	/**
 	 * Helper Method to convert userPostDTO into a JSON string such that the input
