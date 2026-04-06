@@ -24,7 +24,7 @@ public class TranslationService {
     private final RestTemplate restTemplate = new RestTemplate();
     private final String API_URL = "https://api-inference.huggingface.co/models/facebook/nllb-200-distilled-1.3B";
 
-    public String translate(String text, String targetLang) {
+    public String translate(String text, String language) {
         // Prepare Headers
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -34,7 +34,7 @@ public class TranslationService {
         Map<String, Object> body = new HashMap<>();
         body.put("inputs", text);
         Map<String, String> parameters = new HashMap<>();
-        parameters.put("target_lang", targetLang); // e.g., "fra_Latn"
+        parameters.put("language", language); // e.g., "fra_Latn"
         body.put("parameters", parameters);
 
         HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);

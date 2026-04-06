@@ -24,13 +24,13 @@ public class TranslationController {
     @ResponseBody
     public String getTranslation(@RequestBody Map<String, String> request) {
         String text = request.get("text");
-        String targetLang = request.get("targetLang");
+        String language = request.get("language");
         
         // If the frontend didn't send a language, we can default to English
-        if (targetLang == null || targetLang.isEmpty()) {
-            targetLang = "en";
+        if (language == null || language.isEmpty()) {
+            language = "en";
         }
         
-        return translationService.translate(text, targetLang);
+        return translationService.translate(text, language);
     }
 }
