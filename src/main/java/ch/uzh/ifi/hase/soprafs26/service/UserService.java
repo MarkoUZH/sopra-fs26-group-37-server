@@ -67,6 +67,17 @@ public class UserService {
 
 		return existingUser;}
 	
+	public User updateUserLanguage(String token, String newLanguage) {
+    	User user = userRepository.findByToken(token);
+    	if (user == null) {
+        	throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+    	}
+    	user.setLanguage(newLanguage);
+    	user = userRepository.save(user);
+    	userRepository.flush();
+    	return user;
+	}
+	
 
 	public boolean verifyToken(String token) {
     if (token == null || token.isEmpty()) {

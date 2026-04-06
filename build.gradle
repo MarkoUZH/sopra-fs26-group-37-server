@@ -7,6 +7,8 @@ plugins {
     id "org.sonarqube" version "7.2.1.6560"
 }
 
+
+
 group = 'ch.uzh.ifi.hasel'
 version = '0.0.1-SNAPSHOT'
 
@@ -80,6 +82,12 @@ if (secretPropsFile.exists()) {
     p.load(new FileInputStream(secretPropsFile))
     p.each { name, value ->
         ext[name] = value
+    }
+}
+
+bootRun {
+    if (project.hasProperty('huggingface.api.token')) {
+        systemProperty "HUGGINGFACE_API_TOKEN", project.property('huggingface.api.token')
     }
 }
 
