@@ -33,6 +33,9 @@ public class User implements Serializable {
 	private String username;
 
 	@Column(nullable = false, unique = true)
+	private String name;
+
+	@Column(nullable = false, unique = true)
 	private String token;
 
 	@Column(nullable = false)
@@ -66,6 +69,15 @@ public class User implements Serializable {
 	public String getUsername() {
 		return username;
 	}
+
+	public String getName() {
+		return name;
+	}
+
+	public String setName(String name) {
+		return name;
+	}
+	
 
 	public void setUsername(String username) {
 		this.username = username;

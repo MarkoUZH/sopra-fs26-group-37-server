@@ -7,6 +7,7 @@ public class UserGetDTO {
 	private Long id;
 	private String email;
 	private String username;
+	private String name;
 	private UserStatus status;
 	private String token;
 	private String language;
@@ -35,6 +36,14 @@ public class UserGetDTO {
 
 	public void setUsername(String username) {
 		this.username = username;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public UserStatus getStatus() {
