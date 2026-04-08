@@ -48,7 +48,7 @@ public class User implements Serializable {
   @OneToMany(mappedBy = "owner")
   private List<Project> ownedProjects;
 
-  @OneToMany(mappedBy = "assignedUsers")
+  @ManyToMany(mappedBy = "assignedUsers")
   private List<Task> tasks;
   
 	@Column(nullable = false)
