@@ -8,6 +8,7 @@ import org.springframework.web.server.ResponseStatusException;
 import ch.uzh.ifi.hase.soprafs26.entity.User;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.UserGetDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.UserPostDTO;
+import ch.uzh.ifi.hase.soprafs26.rest.dto.UserPutDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs26.service.UserService;
 
@@ -87,6 +88,26 @@ public UserGetDTO getUser(@PathVariable("id") Long id) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error during login");
         }
     }
+
+	@PutMapping("/users/{id}")
+@ResponseStatus(HttpStatus.NO_CONTENT) // 204 No Content is standard for successful updates
+public void updateUser(@PathVariable("id") Long id, @RequestBody UserPutDTO userPutDTO) {
+    // 1. Convert DTO to Entity (You may need to add this mapping to your DTOMapper)
+    User userUpdates = DTOMapper.INSTANCE.convertUserPutDTOtoEntity(userPutDTO);
+
+    // 2. Delegate update logic to service
+    userService.updateUser(id, userUpdates);
+}
+
+	@PutMapping("/users/{id}")
+@ResponseStatus(HttpStatus.NO_CONTENT) // 204 No Content is standard for successful updates
+public void updateUser(@PathVariable("id") Long id, @RequestBody UserPutDTO userPutDTO) {
+    // 1. Convert DTO to Entity (You may need to add this mapping to your DTOMapper)
+    User userUpdates = DTOMapper.INSTANCE.convertUserPutDTOtoEntity(userPutDTO);
+
+    // 2. Delegate update logic to service
+    userService.updateUser(id, userUpdates);
+}
 
 
 	@PutMapping("/logout/{id}")

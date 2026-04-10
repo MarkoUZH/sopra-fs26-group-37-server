@@ -98,6 +98,25 @@ public class UserService {
 				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 	}
 
+
+	public void updateUser(Long id, User userUpdates) {
+    User existingUser = userRepository.findById(id)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+    // Update username if provided
+    if (userUpdates.getUsername() != null && !userUpdates.getUsername().isEmpty()) {
+        existingUser.setUsername(userUpdates.getUsername());
+    }
+
+    // Update password if provided
+    if (userUpdates.getPassword() != null && !userUpdates.getPassword().isEmpty()) {
+        existingUser.setPassword(userUpdates.getPassword());
+    }
+
+    userRepository.save(existingUser);
+    userRepository.flush();
+}
+
 	public void setUserStatus(String token) {
 		User user = userRepository.findByToken(token);
 		if (user != null) {
