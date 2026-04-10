@@ -33,7 +33,7 @@ public class User implements Serializable {
 	@Column(nullable = false, unique = true)
 	private String username;
 
-	@Column(nullable = false, unique = true)
+	@Column(nullable = false)
 	private String name;
 
 	@Column(nullable = false, unique = true)
@@ -84,8 +84,8 @@ public class User implements Serializable {
 		return name;
 	}
 
-	public String setName(String name) {
-		return name;
+	public void setName(String name) {
+		this.name = name;
 	}
 	
 
