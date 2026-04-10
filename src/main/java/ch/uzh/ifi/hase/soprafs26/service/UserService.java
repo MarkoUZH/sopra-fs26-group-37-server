@@ -108,6 +108,10 @@ public class UserService {
         existingUser.setUsername(userUpdates.getUsername());
     }
 
+	if(userUpdates.getName() != null && !userUpdates.getName().isEmpty()) {
+		existingUser.setName(userUpdates.getName());
+	}
+
     // Update password if provided
     if (userUpdates.getPassword() != null && !userUpdates.getPassword().isEmpty()) {
         existingUser.setPassword(userUpdates.getPassword());
