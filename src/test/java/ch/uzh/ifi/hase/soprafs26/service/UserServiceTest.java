@@ -90,4 +90,45 @@ public class UserServiceTest {
 		assertTrue(exception.getReason().contains("Wrong password"));
 	}
 
+
+		@Test
+	public void updateUser_validUsername_success() {
+		// given
+		User updates = new User();
+		updates.setUsername("newUsername");
+
+		Mockito.when(userRepository.findById(1L)).thenReturn(java.util.Optional.of(testUser));
+
+		// when
+		userService.updateUser(1L, updates);
+
+		// then
+		assertEquals("newUsername", testUser.getUsername());
+		Mockito.verify(userRepository, Mockito.times(1)).save(testUser);
+	}
+
+	@Test
+	public void updateUser_validPassword_success() {
+		// given
+		User updates = new User();
+		updates.setPassword("newSecurePassword");
+
+		Mockito.when(userRepository.findById(1L)).thenReturn(java.util.Optional.of(testUser));
+
+		// when
+		userService.updateUser(1L, updates);
+
+		// then
+		assertEquals("newSecurePassword", testUser.getPassword());
+		Mockito.verify(userRepository, Mockito.times(1)).save(testUser);
+	}
+
+	@Test
+	public void updateUser_nonExistentUser_throwsException() {
+		// given
+		Mockito.when(userRepository.findById(99L)).thenReturn(java.util.Optional.empty());
+
+		// when / then
+		assertThrows(ResponseStatusException.class, () -> userService.updateUser(99L, new User()));
+	}
 }

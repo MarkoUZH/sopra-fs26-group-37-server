@@ -46,7 +46,7 @@ public class ProjectServiceIntegrationTest {
         testProject.setDescription("testDescription");
 
 		// when
-		Project createdProject = projectService.createProject(testProject);
+		Project createdProject = projectService.createProject(testProject,null, null);
 
 		// then
 		assertEquals(testProject.getId(), createdProject.getId());

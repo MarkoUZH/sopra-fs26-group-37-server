@@ -7,6 +7,7 @@ import tools.jackson.databind.ObjectMapper;
 import ch.uzh.ifi.hase.soprafs26.constant.UserStatus;
 import ch.uzh.ifi.hase.soprafs26.entity.User;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.UserPostDTO;
+import ch.uzh.ifi.hase.soprafs26.rest.dto.UserPutDTO;
 import ch.uzh.ifi.hase.soprafs26.service.UserService;
 
 import org.junit.jupiter.api.Test;
@@ -28,6 +29,7 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -111,4 +113,26 @@ public void login_validCredentials_returnUser() throws Exception {
 					String.format("The request body could not be created.%s", e.toString()));
 		}
 	}
+
+
+                @Test
+                public void updateUser_validInput_returnsNoContent() throws Exception {
+                // given
+                UserPutDTO userPutDTO = new UserPutDTO();
+                userPutDTO.setUsername("updatedUser");
+                userPutDTO.setName("Updated Name");
+                userPutDTO.setPassword("newPassword");
+
+                // when
+                MockHttpServletRequestBuilder putRequest = put("/users/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(userPutDTO));
+
+                // then
+                mockMvc.perform(putRequest)
+                        .andExpect(status().isNoContent());
+
+                // verify that the service was called with the correct ID
+                Mockito.verify(userService, Mockito.times(1)).updateUser(Mockito.eq(1L), Mockito.any());
+                }
 }
