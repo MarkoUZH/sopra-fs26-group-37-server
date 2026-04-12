@@ -79,13 +79,15 @@ public class UserService {
 	}
 	
 
-	public boolean verifyToken(String token) {
-    if (token == null || token.isEmpty()) {
-        return false;
-    }
-    User user = userRepository.findByToken(token);
-    return user != null;
-}
+	public User verifyToken(String token) {
+    	User user = userRepository.findByToken(token);
+    	if (user == null) {
+       		throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid or missing token!");
+    	}
+    	return user;
+	}
+
+
 	public User getUserByToken(String token) {
 		if (token == null || token.isEmpty()) {
 			return null;

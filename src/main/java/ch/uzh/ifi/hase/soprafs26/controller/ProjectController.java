@@ -1,5 +1,8 @@
 package ch.uzh.ifi.hase.soprafs26.controller;
 
+import ch.uzh.ifi.hase.soprafs26.service.UserService;
+
+
 import ch.uzh.ifi.hase.soprafs26.entity.Project;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.ProjectGetDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.ProjectPostDTO;
@@ -17,17 +20,22 @@ import java.util.Optional;
 public class ProjectController {
 
 	private final ProjectService projectService;
+    private final UserService userService;
 
-	ProjectController(ProjectService projectService) {
+	ProjectController(ProjectService projectService, UserService userService) {
 		this.projectService = projectService;
+        this.userService = userService;
 	}
 
 	@GetMapping("/projects")
 	@ResponseStatus(HttpStatus.OK)
 	@ResponseBody
-	public List<ProjectGetDTO> getAllProjects() {
+	public List<ProjectGetDTO> getAllProjects(@RequestHeader(value = "Authorization", required = false) String token) {
 		List<Project> projects = projectService.getProjects();
 		List<ProjectGetDTO> projectGetDTOS = new ArrayList<>();
+
+        userService.verifyToken(token);
+
 
 		for (Project project : projects) {
             projectGetDTOS.add(ProjectDTOMapper.INSTANCE.convertEntityToProjectGetDTO(project));
@@ -38,7 +46,11 @@ public class ProjectController {
     @GetMapping("/projects/users/{userId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public List<ProjectGetDTO> getProjectsByUserId(@PathVariable Long userId) {
+    public List<ProjectGetDTO> getProjectsByUserId(@PathVariable Long userId, @RequestHeader(value = "Authorization", required = false) String token) {
+        
+        userService.verifyToken(token);
+
+        
         List<Project> projects = projectService.getProjectsByUserId(userId);
         List<ProjectGetDTO> projectGetDTOS = new ArrayList<>();
 
@@ -53,7 +65,8 @@ public class ProjectController {
     @PostMapping("/projects")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public ProjectGetDTO createProject(@RequestBody ProjectPostDTO projectPostDTO) {
+    public ProjectGetDTO createProject(@RequestBody ProjectPostDTO projectPostDTO, @RequestHeader(value = "Authorization", required = false) String token) {
+        userService.verifyToken(token);
         Project projectInput = ProjectDTOMapper.INSTANCE.convertProjectPostDTOtoEntity(projectPostDTO);
         List<Long> memberIds = projectPostDTO.getMemberIds();
             Long ownerId = projectPostDTO.getOwnerId();
@@ -65,7 +78,8 @@ public class ProjectController {
     @GetMapping("/projects/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public ProjectGetDTO getProject(@PathVariable Long id) {
+    public ProjectGetDTO getProject(@PathVariable Long id, @RequestHeader(value = "Authorization", required = false) String token) {
+        userService.verifyToken(token);
         Optional<Project> project = projectService.getProjectById(id);
 
         if (project.isPresent()) {
@@ -81,7 +95,8 @@ public class ProjectController {
     @DeleteMapping("/projects/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public void deleteProject(@PathVariable Long id) {
+    public void deleteProject(@PathVariable Long id, @RequestHeader(value = "Authorization", required = false) String token) {
+        userService.verifyToken(token);
         Optional<Project> project = projectService.getProjectById(id);
 
         if (project.isPresent()) {
@@ -95,7 +110,8 @@ public class ProjectController {
     @PutMapping("/projects/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public ProjectGetDTO updateProject(@RequestBody ProjectPostDTO projectPostDTO, @PathVariable Long id) {
+    public ProjectGetDTO updateProject(@RequestBody ProjectPostDTO projectPostDTO, @PathVariable Long id, @RequestHeader(value = "Authorization", required = false) String token) {
+        userService.verifyToken(token);
         Optional<Project> project = projectService.getProjectById(id);
         Project projectInput = ProjectDTOMapper.INSTANCE.convertProjectPostDTOtoEntity(projectPostDTO);
 

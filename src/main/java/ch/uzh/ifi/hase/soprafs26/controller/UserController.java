@@ -34,7 +34,8 @@ public class UserController {
 	@GetMapping("/users")
 	@ResponseStatus(HttpStatus.OK)
 	@ResponseBody
-	public List<UserGetDTO> getAllUsers() {
+	public List<UserGetDTO> getAllUsers(@RequestHeader(value = "Authorization", required = false) String token) {
+		userService.verifyToken(token);
 		// fetch all users in the internal representation
 		List<User> users = userService.getUsers();
 		List<UserGetDTO> userGetDTOs = new ArrayList<>();
@@ -49,8 +50,9 @@ public class UserController {
 @GetMapping("/users/{id}")
 @ResponseStatus(HttpStatus.OK)
 @ResponseBody
-public UserGetDTO getUser(@PathVariable("id") Long id) {
-    // Standard JPA method: findById returns an Optional
+public UserGetDTO getUser(@PathVariable("id") Long id, @RequestHeader(value = "Authorization", required = false) String token) {
+    userService.verifyToken(token);
+	// Standard JPA method: findById returns an Optional
     User user = userService.getUserById(id);
 	if (user == null) {
 		throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
@@ -90,21 +92,23 @@ public UserGetDTO getUser(@PathVariable("id") Long id) {
     }
 
 	@PutMapping("/users/{id}")
-@ResponseStatus(HttpStatus.NO_CONTENT) // 204 No Content is standard for successful updates
-public void updateUser(@PathVariable("id") Long id, @RequestBody UserPutDTO userPutDTO) {
-    // 1. Convert DTO to Entity (You may need to add this mapping to your DTOMapper)
-    User userUpdates = DTOMapper.INSTANCE.convertUserPutDTOtoEntity(userPutDTO);
+	@ResponseStatus(HttpStatus.NO_CONTENT) // 204 No Content is standard for successful updates
+	public void updateUser(@PathVariable("id") Long id, @RequestBody UserPutDTO userPutDTO, @RequestHeader(value = "Authorization", required = false) String token) {
+    	userService.verifyToken(token);
+		// 1. Convert DTO to Entity (You may need to add this mapping to your DTOMapper)
+    	User userUpdates = DTOMapper.INSTANCE.convertUserPutDTOtoEntity(userPutDTO);
 
-    // 2. Delegate update logic to service
-    userService.updateUser(id, userUpdates);
-}
+    	// 2. Delegate update logic to service
+    	userService.updateUser(id, userUpdates);
+	}
 
 
 	@PutMapping("/logout/{id}")
 @ResponseStatus(HttpStatus.NO_CONTENT)
 @ResponseBody
-public void logoutUser(@PathVariable("id") Long id) {
-    userService.logoutById(id);
+public void logoutUser(@PathVariable("id") Long id, @RequestHeader(value = "Authorization", required = false) String token) {
+    userService.verifyToken(token);
+	userService.logoutById(id);
 }
 }
 
