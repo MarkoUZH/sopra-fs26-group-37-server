@@ -99,16 +99,6 @@ public void updateUser(@PathVariable("id") Long id, @RequestBody UserPutDTO user
     userService.updateUser(id, userUpdates);
 }
 
-	@PutMapping("/users/{id}")
-@ResponseStatus(HttpStatus.NO_CONTENT) // 204 No Content is standard for successful updates
-public void updateUser(@PathVariable("id") Long id, @RequestBody UserPutDTO userPutDTO) {
-    // 1. Convert DTO to Entity (You may need to add this mapping to your DTOMapper)
-    User userUpdates = DTOMapper.INSTANCE.convertUserPutDTOtoEntity(userPutDTO);
-
-    // 2. Delegate update logic to service
-    userService.updateUser(id, userUpdates);
-}
-
 
 	@PutMapping("/logout/{id}")
 @ResponseStatus(HttpStatus.NO_CONTENT)
