@@ -43,7 +43,7 @@ public class ProjectServiceTest {
 	@Test
 	public void createProject_validInputs_success() {
 		// when -> any object is being save in the userRepository -> return the dummy
-		Project createdProject = projectService.createProject(testProject);
+		Project createdProject = projectService.createProject(testProject,null, null);
 
 		// then
 		Mockito.verify(projectRepository, Mockito.times(1)).save(Mockito.any());
