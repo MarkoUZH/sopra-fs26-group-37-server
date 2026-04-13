@@ -79,12 +79,15 @@ public class UserService {
 	}
 	
 
-	public User verifyToken(String token) {
+	public void verifyToken(String token) {
+    	if (token == null || token.isEmpty()) {
+        	throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Token is missing!");
+    	}
+    
     	User user = userRepository.findByToken(token);
     	if (user == null) {
-       		throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid or missing token!");
+        	throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token!");
     	}
-    	return user;
 	}
 
 
