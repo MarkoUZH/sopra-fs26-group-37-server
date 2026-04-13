@@ -18,6 +18,7 @@ import java.util.Map;
 @Service
 public class TranslationService {
 
+
     @Value("${HUGGINGFACE_API_TOKEN}")
     private String hfToken;
 

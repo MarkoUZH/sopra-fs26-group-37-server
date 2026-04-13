@@ -1,5 +1,8 @@
 package ch.uzh.ifi.hase.soprafs26.controller;
 
+import ch.uzh.ifi.hase.soprafs26.service.UserService;
+
+
 import ch.uzh.ifi.hase.soprafs26.entity.Task;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.*;
 import ch.uzh.ifi.hase.soprafs26.rest.mapper.TaskDTOMapper;
@@ -16,18 +19,23 @@ import java.util.Optional;
 public class TaskController {
 
 	private final TaskService taskService;
+    private final UserService userService;
 
-	TaskController(TaskService taskService) {
+	TaskController(TaskService taskService, UserService userService) {
 		this.taskService = taskService;
+        this.userService = userService;
 	}
 
 
     @GetMapping("/tasks")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public List<TaskGetDTO> getAllTasks() {
+    public List<TaskGetDTO> getAllTasks(@RequestHeader(value = "Authorization", required = false) String token) {
         List<Task> tasks = taskService.getTasks();
         List<TaskGetDTO> taskGetDTOS = new ArrayList<>();
+
+        userService.verifyToken(token);
+
 
         for (Task task : tasks) {
             taskGetDTOS.add(TaskDTOMapper.INSTANCE.convertEntityToTaskGetDTO(task));
@@ -38,7 +46,8 @@ public class TaskController {
     @PostMapping("/tasks")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public TaskGetDTO createTask(@RequestBody TaskPostDTO taskPostDTO) {
+    public TaskGetDTO createTask(@RequestBody TaskPostDTO taskPostDTO, @RequestHeader(value = "Authorization", required = false) String token) {
+        userService.verifyToken(token);
         Task taskInput = TaskDTOMapper.INSTANCE.convertTaskPostDTOtoEntity(taskPostDTO);
 
         Task createdTask = taskService.createTask(taskInput);
@@ -49,7 +58,8 @@ public class TaskController {
     @GetMapping("/tasks/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public TaskGetDTO getTask(@PathVariable Long id) {
+    public TaskGetDTO getTask(@PathVariable Long id, @RequestHeader(value = "Authorization", required = false) String token) {
+        userService.verifyToken(token);
         Optional<Task> task = taskService.getTaskById(id);
 
         if (task.isPresent()) {
@@ -63,7 +73,8 @@ public class TaskController {
     @DeleteMapping("/tasks/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public void deleteTask(@PathVariable Long id) {
+    public void deleteTask(@PathVariable Long id, @RequestHeader(value = "Authorization", required = false) String token) {
+        userService.verifyToken(token);
         Optional<Task> task = taskService.getTaskById(id);
 
         if (task.isPresent()) {
@@ -77,7 +88,8 @@ public class TaskController {
     @PutMapping("/tasks/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public TaskGetDTO updateTask(@RequestBody TaskPutDTO taskPutDTO, @PathVariable Long id) {
+    public TaskGetDTO updateTask(@RequestBody TaskPutDTO taskPutDTO, @PathVariable Long id, @RequestHeader(value = "Authorization", required = false) String token) {
+        userService.verifyToken(token);
         Optional<Task> task = taskService.getTaskById(id);
         Task taskInput = TaskDTOMapper.INSTANCE.convertTaskPutDTOtoEntity(taskPutDTO);
 

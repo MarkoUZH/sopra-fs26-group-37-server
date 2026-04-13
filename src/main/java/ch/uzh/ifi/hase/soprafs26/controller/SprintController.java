@@ -1,5 +1,7 @@
 package ch.uzh.ifi.hase.soprafs26.controller;
 
+import ch.uzh.ifi.hase.soprafs26.service.UserService;
+
 
 import ch.uzh.ifi.hase.soprafs26.rest.dto.SprintDTO;
 import ch.uzh.ifi.hase.soprafs26.service.SprintService;
@@ -15,10 +17,15 @@ import java.util.List;
 public class SprintController {
 
 	private final SprintService sprintService;
+    private final UserService userService;
 
-	SprintController(SprintService sprintService) {
+
+	SprintController(SprintService sprintService, UserService userService) {
 		this.sprintService = sprintService;
+		this.userService = userService;
 	}
+
+	//IMPORTANT: add userService.verifyToken(token); and @RequestHeader(value = "Authorization", required = false) String token once implemented
 
 	/*@GetMapping("/sprints")
 	@ResponseStatus(HttpStatus.OK)

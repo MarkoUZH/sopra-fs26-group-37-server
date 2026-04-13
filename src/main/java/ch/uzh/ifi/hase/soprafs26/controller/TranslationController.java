@@ -1,4 +1,6 @@
 package ch.uzh.ifi.hase.soprafs26.controller;
+import ch.uzh.ifi.hase.soprafs26.service.UserService;
+
 
 import ch.uzh.ifi.hase.soprafs26.service.TranslationService;
 import org.springframework.http.HttpStatus;
@@ -9,9 +11,11 @@ import java.util.Map;
 public class TranslationController {
 
     private final TranslationService translationService;
+    private final UserService userService; // 1. Declare it
 
-    public TranslationController(TranslationService translationService) {
+    public TranslationController(TranslationService translationService, UserService userService) {
         this.translationService = translationService;
+        this.userService= userService;
     }
 
     /**
@@ -22,7 +26,12 @@ public class TranslationController {
     @PostMapping("/translate")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public String getTranslation(@RequestBody Map<String, String> request) {
+    public String getTranslation(
+    @RequestBody Map<String, String> request,
+    @RequestHeader(value = "Authorization", required = false) String token // Get token from header
+    ) {
+        userService.verifyToken(token);
+
         String text = request.get("text");
         String language = request.get("language");
         
