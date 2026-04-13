@@ -131,4 +131,49 @@ public class UserServiceTest {
 		// when / then
 		assertThrows(ResponseStatusException.class, () -> userService.updateUser(99L, new User()));
 	}
+
+	//for the token verification. all our services use this now so it better work lol
+	@Test
+    public void verifyToken_validToken_success() {
+        // given
+        String validToken = "valid-token-123";
+        testUser.setToken(validToken);
+        
+        Mockito.when(userRepository.findByToken(validToken)).thenReturn(testUser);
+
+        // when & then: should not throw any exception
+        assertDoesNotThrow(() -> userService.verifyToken(validToken));
+    }
+
+    @Test
+    public void verifyToken_invalidToken_throwsUnauthorized() {
+        // given
+        String invalidToken = "wrong-token";
+        Mockito.when(userRepository.findByToken(invalidToken)).thenReturn(null);
+
+        // when & then
+        ResponseStatusException exception = assertThrows(ResponseStatusException.class, 
+            () -> userService.verifyToken(invalidToken));
+            
+        assertEquals(HttpStatus.UNAUTHORIZED, exception.getStatusCode());
+        assertEquals("Invalid token!", exception.getReason());
+    }
+
+    @Test
+    public void verifyToken_nullToken_throwsUnauthorized() {
+        // given
+        String nullToken = null;
+
+        // when & then
+        ResponseStatusException exception = assertThrows(ResponseStatusException.class, 
+            () -> userService.verifyToken(nullToken));
+            
+        assertEquals(HttpStatus.UNAUTHORIZED, exception.getStatusCode());
+        assertEquals("Token is missing!", exception.getReason());
+    }
+
+
+
+
+
 }
