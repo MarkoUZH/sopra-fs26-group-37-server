@@ -84,6 +84,7 @@ public class UserService {
         	throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Token is missing!");
     	}
     
+		
     	User user = userRepository.findByToken(token);
     	if (user == null) {
         	throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token!");
