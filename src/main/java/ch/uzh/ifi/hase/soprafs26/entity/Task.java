@@ -1,6 +1,7 @@
 package ch.uzh.ifi.hase.soprafs26.entity;
 
 import ch.uzh.ifi.hase.soprafs26.constant.Priority;
+import ch.uzh.ifi.hase.soprafs26.constant.TaskStatus;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -17,22 +18,32 @@ public class Task {
     private List<Tag> tags;
     @ManyToMany
     private List<User> assignedUsers;
+    @Enumerated(EnumType.STRING)
     private Priority priority;
     private LocalDateTime dueDate;
     private float timeEstimate;
     @ManyToOne
     private Sprint sprint;
     @ManyToOne
+    @JoinTable(
+        name = "project_tasks",
+        joinColumns = @JoinColumn(name = "task_id"),
+        inverseJoinColumns = @JoinColumn(name = "project_id")
+    )
     private Project project;
     private String acceptanceCriteria;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private TaskStatus status = TaskStatus.TODO;
 
-    public Task(String name, String description, List<Tag> tags, List<User> assignedUsers, Priority priority, LocalDateTime dueDate, float timeEstimate, Sprint sprint, Project project, String acceptanceCriteria) {
+    public Task(String name, String description, List<Tag> tags, List<User> assignedUsers, Priority priority, LocalDateTime dueDate, float timeEstimate, Sprint sprint, Project project, String acceptanceCriteria, TaskStatus status) {
         this.name = name;
         this.description = description;
         this.tags = tags;
         this.assignedUsers = assignedUsers;
         this.priority = priority;
         this.dueDate = dueDate;
+        this.status = status;
         this.timeEstimate = timeEstimate;
         this.sprint = sprint;
         this.project = project;
@@ -129,5 +140,13 @@ public class Task {
 
     public void setProject(Project project) {
         this.project = project;
+    }
+
+    public TaskStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(TaskStatus status) {
+        this.status = status;
     }
 }

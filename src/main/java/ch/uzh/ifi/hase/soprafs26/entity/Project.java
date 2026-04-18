@@ -13,7 +13,12 @@ public class Project {
     private Long id;
     private String name;
     private String description;
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "project_tasks",
+            joinColumns = @JoinColumn(name = "project_id"), // FK to projects table
+        inverseJoinColumns = @JoinColumn(name = "task_id")
+    )
     private List<Task> tasks;
     @ManyToOne
     @JoinColumn(name = "owner_id")

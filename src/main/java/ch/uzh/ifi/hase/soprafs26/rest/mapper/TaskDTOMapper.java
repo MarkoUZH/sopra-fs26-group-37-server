@@ -26,6 +26,7 @@ public interface TaskDTOMapper {
     @Mapping(source = "sprint", target = "sprint")
     @Mapping(source = "project", target = "project")
     @Mapping(source = "acceptanceCriteria", target = "acceptanceCriteria")
+    @Mapping(source = "status", target = "status")
     TaskGetDTO convertEntityToTaskGetDTO(Task task);
 
     @Mapping(source = "name", target = "name")
