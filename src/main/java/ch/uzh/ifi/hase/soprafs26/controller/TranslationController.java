@@ -28,7 +28,7 @@ public class TranslationController {
     @ResponseBody
     public String getTranslation(
     @RequestBody Map<String, String> request,
-    @RequestHeader(value = "X-Task-Token", required = true) String token // Get token from header
+    @RequestHeader(value = "Authorization", required = false) String token // Get token from header
     ) {
         userService.verifyToken(token);
 
