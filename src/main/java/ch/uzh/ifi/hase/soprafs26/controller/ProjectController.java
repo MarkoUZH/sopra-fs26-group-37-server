@@ -152,10 +152,10 @@ public class ProjectController {
     @GetMapping("/projects/{id}/sprints")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public List<SprintDTO> getSprintsByProject(@PathVariable Long id, @RequestHeader(value = "Authorization", required = false) String token) {
+    public List<SprintGetDTO> getSprintsByProject(@PathVariable Long id, @RequestHeader(value = "Authorization", required = false) String token) {
         userService.verifyToken(token);
         Optional<Project> project = projectService.getProjectById(id);
-        List<SprintDTO> sprintDTOS = new ArrayList<>();
+        List<SprintGetDTO> sprintDTOS = new ArrayList<>();
 
         if (project.isPresent()) {
             List<Sprint> sprints = project.get().getSprints();
