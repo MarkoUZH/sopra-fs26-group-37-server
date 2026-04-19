@@ -4,6 +4,7 @@ import ch.uzh.ifi.hase.soprafs26.entity.Sprint;
 import ch.uzh.ifi.hase.soprafs26.entity.Tag;
 import ch.uzh.ifi.hase.soprafs26.entity.Task;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.*;
+import ch.uzh.ifi.hase.soprafs26.rest.mapper.TagDTOMapper;
 import ch.uzh.ifi.hase.soprafs26.rest.mapper.TaskDTOMapper;
 import ch.uzh.ifi.hase.soprafs26.service.UserService;
 
@@ -168,16 +169,15 @@ public class ProjectController {
     @GetMapping("/projects/{id}/tags")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public List<TagDTO> getTagsByProject(@PathVariable Long id, @RequestHeader(value = "Authorization", required = false) String token) {
+    public List<TagGetDTO> getTagsByProject(@PathVariable Long id, @RequestHeader(value = "Authorization", required = false) String token) {
         userService.verifyToken(token);
         Optional<Project> project = projectService.getProjectById(id);
-        List<TagDTO> tagDTOS = new ArrayList<>();
+        List<TagGetDTO> tagDTOS = new ArrayList<>();
 
         if (project.isPresent()) {
             List<Tag> tags = project.get().getTags();
             for (Tag tag : tags) {
-                // TODO add mapping
-                //.add(TaskDTOMapper.INSTANCE.convertEntityToTaskGetDTO(task));
+                tagDTOS.add(TagDTOMapper.INSTANCE.convertEntityToTagGetDTO(tag));
             }
             return tagDTOS;
         }
@@ -185,4 +185,6 @@ public class ProjectController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Project with id " + id + " does not exist");
         }
     }
+
+
 }

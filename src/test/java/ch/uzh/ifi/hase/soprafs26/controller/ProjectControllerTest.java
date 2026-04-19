@@ -1,8 +1,8 @@
 package ch.uzh.ifi.hase.soprafs26.controller;
 
 import ch.uzh.ifi.hase.soprafs26.constant.UserStatus;
-import ch.uzh.ifi.hase.soprafs26.entity.Project;
-import ch.uzh.ifi.hase.soprafs26.entity.User;
+import ch.uzh.ifi.hase.soprafs26.entity.*;
+import ch.uzh.ifi.hase.soprafs26.repository.UserRepository;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.ProjectPostDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.UserPostDTO;
 import ch.uzh.ifi.hase.soprafs26.service.ProjectService;
@@ -40,6 +40,12 @@ public class ProjectControllerTest {
     @MockitoBean
     private ProjectService projectService;
 
+    @MockitoBean
+    private UserService userService;
+
+    @MockitoBean
+    private UserRepository userRepository;
+
     @Test
     public void givenProjects_whenGetProjects_thenReturnJsonArray() throws Exception {
         // given
@@ -52,7 +58,7 @@ public class ProjectControllerTest {
         given(projectService.getProjects()).willReturn(allProjects);
 
         // when
-        MockHttpServletRequestBuilder getRequest = get("/projects").contentType(MediaType.APPLICATION_JSON);
+        MockHttpServletRequestBuilder getRequest = get("/projects").contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer 1");
 
         // then
         mockMvc.perform(getRequest).andExpect(status().isOk())
@@ -83,7 +89,8 @@ public void createProject_validInput_projectCreated() throws Exception {
     // when
     MockHttpServletRequestBuilder postRequest = post("/projects")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(asJsonString(projectPostDTO));
+            .content(asJsonString(projectPostDTO))
+            .header("Authorization", "Bearer 1");
 
     // then
     mockMvc.perform(postRequest)
@@ -103,7 +110,8 @@ public void createProject_validInput_projectCreated() throws Exception {
         given(projectService.getProjectById(1L)).willReturn(Optional.of(project));
 
         // when
-        MockHttpServletRequestBuilder getRequest = get("/projects/1").contentType(MediaType.APPLICATION_JSON);
+        MockHttpServletRequestBuilder getRequest = get("/projects/1").contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer 1");
 
         // then
         mockMvc.perform(getRequest).andExpect(status().isOk())
@@ -119,9 +127,10 @@ public void createProject_validInput_projectCreated() throws Exception {
         project.setDescription("Test Description");
 
         given(projectService.getProjectById(1L)).willReturn(Optional.of(project));
+        given(userRepository.findByToken("1")).willReturn(createMockUser());
 
         // when
-        MockHttpServletRequestBuilder getRequest = get("/projects/2").contentType(MediaType.APPLICATION_JSON);
+        MockHttpServletRequestBuilder getRequest = get("/projects/2").contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer 1");
 
         // then
         mockMvc.perform(getRequest).andExpect(status().isNotFound()).andExpect(jsonPath("$.detail", is("Project with id 2 does not exist")));
@@ -137,7 +146,7 @@ public void createProject_validInput_projectCreated() throws Exception {
         given(projectService.getProjectById(1L)).willReturn(Optional.of(project));
 
         // when
-        MockHttpServletRequestBuilder deleteRequest = delete("/projects/1").contentType(MediaType.APPLICATION_JSON);
+        MockHttpServletRequestBuilder deleteRequest = delete("/projects/1").contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer 1");
 
         // then
         mockMvc.perform(deleteRequest).andExpect(status().isOk());
@@ -153,7 +162,7 @@ public void createProject_validInput_projectCreated() throws Exception {
         given(projectService.getProjectById(1L)).willReturn(Optional.of(project));
 
         // when
-        MockHttpServletRequestBuilder deleteRequest = delete("/projects/2").contentType(MediaType.APPLICATION_JSON);
+        MockHttpServletRequestBuilder deleteRequest = delete("/projects/2").contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer 1");
 
         // then
         mockMvc.perform(deleteRequest).andExpect(status().isNotFound());
@@ -181,11 +190,196 @@ public void createProject_validInput_projectCreated() throws Exception {
 
         // when/then -> do the request + validate the result
         MockHttpServletRequestBuilder putRequest = put("/projects/1").contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(projectPostDTO));
+                .content(asJsonString(projectPostDTO)).header("Authorization", "Bearer 1");
 
         // then
         mockMvc.perform(putRequest)
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    public void getTasksByProject_validProject_thenReturnTasks() throws Exception {
+        // given
+        Task task = new Task();
+        task.setId(1L);
+        task.setName("Implement feature");
+
+        Project project = new Project();
+        project.setId(1L);
+        project.setTasks(Collections.singletonList(task));
+
+        given(projectService.getProjectById(1L)).willReturn(Optional.of(project));
+
+        // when
+        MockHttpServletRequestBuilder getRequest = get("/projects/1/tasks")
+                .contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer 1");
+
+        // then
+        mockMvc.perform(getRequest)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].id", is(task.getId().intValue())))
+                .andExpect(jsonPath("$[0].name", is(task.getName())));
+    }
+
+    @Test
+    public void getTasksByProject_emptyTaskList_thenReturnEmptyArray() throws Exception {
+        // given
+        Project project = new Project();
+        project.setId(1L);
+        project.setTasks(Collections.emptyList());
+
+        given(projectService.getProjectById(1L)).willReturn(Optional.of(project));
+
+        // when
+        MockHttpServletRequestBuilder getRequest = get("/projects/1/tasks")
+                .contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer 1");
+
+        // then
+        mockMvc.perform(getRequest)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(0)));
+    }
+
+    @Test
+    public void getTasksByProject_projectNotFound_thenReturnNotFound() throws Exception {
+        // given
+        given(projectService.getProjectById(99L)).willReturn(Optional.empty());
+
+        // when
+        MockHttpServletRequestBuilder getRequest = get("/projects/99/tasks")
+                .contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer 1");
+
+        // then
+        mockMvc.perform(getRequest)
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.detail", is("Project with id 99 does not exist")));
+    }
+
+    // -------------------------------------------------------------------------
+    // GET /projects/{id}/sprints
+    // -------------------------------------------------------------------------
+
+    /*@Test
+    public void getSprintsByProject_validProject_thenReturnSprints() throws Exception {
+        // given
+        Sprint sprint = new Sprint();
+        sprint.setId(1L);
+        sprint.setName("Sprint 1");
+
+        Project project = new Project();
+        project.setId(1L);
+        project.setSprints(Collections.singletonList(sprint));
+
+        given(projectService.getProjectById(1L)).willReturn(Optional.of(project));
+
+        // when
+        MockHttpServletRequestBuilder getRequest = get("/projects/1/sprints")
+                .contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer 1");
+
+        // then
+        mockMvc.perform(getRequest)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].id", is(sprint.getId().intValue())))
+                .andExpect(jsonPath("$[0].name", is(sprint.getName())));
+    }
+
+    @Test
+    public void getSprintsByProject_emptySprintList_thenReturnEmptyArray() throws Exception {
+        // given
+        Project project = new Project();
+        project.setId(1L);
+        project.setSprints(Collections.emptyList());
+
+        given(projectService.getProjectById(1L)).willReturn(Optional.of(project));
+
+        // when
+        MockHttpServletRequestBuilder getRequest = get("/projects/1/sprints")
+                .contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer 1");
+
+        // then
+        mockMvc.perform(getRequest)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(0)));
+    }
+
+    @Test
+    public void getSprintsByProject_projectNotFound_thenReturnNotFound() throws Exception {
+        // given
+        given(projectService.getProjectById(99L)).willReturn(Optional.empty());
+
+        // when
+        MockHttpServletRequestBuilder getRequest = get("/projects/99/sprints")
+                .contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer 1");
+
+        // then
+        mockMvc.perform(getRequest)
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.detail", is("Project with id 99 does not exist")));
+    }*/
+
+    // -------------------------------------------------------------------------
+    // GET /projects/{id}/tags
+    // -------------------------------------------------------------------------
+
+    @Test
+    public void getTagsByProject_validProject_thenReturnTags() throws Exception {
+        // given
+        Tag tag = new Tag();
+        tag.setId(1L);
+        tag.setName("Backend");
+
+        Project project = new Project();
+        project.setId(1L);
+        project.setTags(Collections.singletonList(tag));
+
+        given(projectService.getProjectById(1L)).willReturn(Optional.of(project));
+
+        // when
+        MockHttpServletRequestBuilder getRequest = get("/projects/1/tags")
+                .contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer 1");
+
+        // then
+        mockMvc.perform(getRequest)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].id", is(tag.getId().intValue())))
+                .andExpect(jsonPath("$[0].name", is(tag.getName())));
+    }
+
+    @Test
+    public void getTagsByProject_emptyTagList_thenReturnEmptyArray() throws Exception {
+        // given
+        Project project = new Project();
+        project.setId(1L);
+        project.setTags(Collections.emptyList());
+
+        given(projectService.getProjectById(1L)).willReturn(Optional.of(project));
+
+        // when
+        MockHttpServletRequestBuilder getRequest = get("/projects/1/tags")
+                .contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer 1");
+
+        // then
+        mockMvc.perform(getRequest)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(0)));
+    }
+
+    @Test
+    public void getTagsByProject_projectNotFound_thenReturnNotFound() throws Exception {
+        // given
+        given(projectService.getProjectById(99L)).willReturn(Optional.empty());
+
+        // when
+        MockHttpServletRequestBuilder getRequest = get("/projects/99/tags")
+                .contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer 1");
+
+        // then
+        mockMvc.perform(getRequest)
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.detail", is("Project with id 99 does not exist")));
     }
 
     private String asJsonString(final Object object) {
@@ -195,5 +389,17 @@ public void createProject_validInput_projectCreated() throws Exception {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     String.format("The request body could not be created.%s", e.toString()));
         }
+    }
+
+    private User createMockUser(){
+        User user = new User();
+        user.setId(1L);
+        user.setUsername("loginUser");
+        user.setPassword("password");
+        user.setEmail("email");
+        user.setToken("token");
+        user.setManager(true);
+
+        return user;
     }
 }
