@@ -1,5 +1,8 @@
-	package ch.uzh.ifi.hase.soprafs26.controller;
+package ch.uzh.ifi.hase.soprafs26.controller;
 
+import ch.uzh.ifi.hase.soprafs26.entity.Task;
+import ch.uzh.ifi.hase.soprafs26.rest.dto.TaskGetDTO;
+import ch.uzh.ifi.hase.soprafs26.rest.mapper.TaskDTOMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -47,18 +50,18 @@ public class UserController {
 		return userGetDTOs;
 	}
 
-@GetMapping("/users/{id}")
-@ResponseStatus(HttpStatus.OK)
-@ResponseBody
-public UserGetDTO getUser(@PathVariable("id") Long id, @RequestHeader(value = "Authorization", required = false) String token) {
-    userService.verifyToken(token);
-	// Standard JPA method: findById returns an Optional
-    User user = userService.getUserById(id);
-	if (user == null) {
-		throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
-	}
-    return DTOMapper.INSTANCE.convertEntityToUserGetDTO(user);
-}
+    @GetMapping("/users/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public UserGetDTO getUser(@PathVariable("id") Long id, @RequestHeader(value = "Authorization", required = false) String token) {
+        userService.verifyToken(token);
+	    // Standard JPA method: findById returns an Optional
+        User user = userService.getUserById(id);
+	    if (user == null) {
+		    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+	    }
+        return DTOMapper.INSTANCE.convertEntityToUserGetDTO(user);
+    }
 
 	@PostMapping("/users")
 	@ResponseStatus(HttpStatus.CREATED)
@@ -73,7 +76,6 @@ public UserGetDTO getUser(@PathVariable("id") Long id, @RequestHeader(value = "A
 		return DTOMapper.INSTANCE.convertEntityToUserGetDTO(createdUser);
 	}
 
-	
 	@PostMapping("/login")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
@@ -91,25 +93,41 @@ public UserGetDTO getUser(@PathVariable("id") Long id, @RequestHeader(value = "A
         }
     }
 
+	@PutMapping("/users/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT) // 204 No Content is standard for successful updates
+    public void updateUser(@PathVariable("id") Long id, @RequestBody UserPutDTO userPutDTO) {
+        // 1. Convert DTO to Entity (You may need to add this mapping to your DTOMapper)
+        User userUpdates = DTOMapper.INSTANCE.convertUserPutDTOtoEntity(userPutDTO);
 
-		@PutMapping("/users/{id}")
-@ResponseStatus(HttpStatus.NO_CONTENT) // 204 No Content is standard for successful updates
-public void updateUser(@PathVariable("id") Long id, @RequestBody UserPutDTO userPutDTO) {
-    // 1. Convert DTO to Entity (You may need to add this mapping to your DTOMapper)
-    User userUpdates = DTOMapper.INSTANCE.convertUserPutDTOtoEntity(userPutDTO);
-
-    // 2. Delegate update logic to service
-    userService.updateUser(id, userUpdates);
-}
-
-
+        // 2. Delegate update logic to service
+        userService.updateUser(id, userUpdates);
+    }
 
 	@PutMapping("/logout/{id}")
-@ResponseStatus(HttpStatus.NO_CONTENT)
-@ResponseBody
-public void logoutUser(@PathVariable("id") Long id, @RequestHeader(value = "Authorization", required = false) String token) {
-    userService.verifyToken(token);
-	userService.logoutById(id);
-}
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseBody
+    public void logoutUser(@PathVariable("id") Long id, @RequestHeader(value = "Authorization", required = false) String token) {
+        userService.verifyToken(token);
+	    userService.logoutById(id);
+    }
+
+    @GetMapping("/users/{id}/tasks")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public List<TaskGetDTO> getTasksByUser (@PathVariable("id") Long id, @RequestHeader(value = "Authorization", required = false) String token) {
+        userService.verifyToken(token);
+        List<TaskGetDTO> taskGetDTOS = new ArrayList<>();
+        // Standard JPA method: findById returns an Optional
+        User user = userService.getUserById(id);
+        if (user == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+        }
+
+        for (Task task : user.getTasks()) {
+            taskGetDTOS.add(TaskDTOMapper.INSTANCE.convertEntityToTaskGetDTO(task));
+        }
+
+        return taskGetDTOS;
+    }
 }
 
