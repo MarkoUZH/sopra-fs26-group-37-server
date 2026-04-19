@@ -4,12 +4,22 @@ import ch.uzh.ifi.hase.soprafs26.constant.SprintStatus;
 
 import java.util.Date;
 
-public class SprintDTO {
+public class SprintGetDTO {
     private Long id;
     private String name;
     private SprintStatus sprintStatus;
     private Date startTime;
     private Date endTime;
+    private Long projectId;
+    private String projectName;
+
+     public Long getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(Long projectId) {
+        this.projectId = projectId;
+    }
 
     public Long getId() {
         return id;
@@ -50,4 +60,7 @@ public class SprintDTO {
     public void setEndTime(Date endTime) {
         this.endTime = endTime;
     }
+
+    public String getProjectName() { return projectName; }
+    public void setProjectName(String projectName) { this.projectName = projectName; }
 }

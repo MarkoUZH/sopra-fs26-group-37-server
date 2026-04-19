@@ -8,7 +8,7 @@ public class ProjectGetDTO {
     private String description;
     private UserGetDTO owner;
     private List<UserGetDTO> members;
-    private List<SprintDTO> sprints;
+    private List<SprintGetDTO> sprints;
     private List<TagDTO> tags;
     private List<TaskDTO> tasks;
 
@@ -52,11 +52,11 @@ public class ProjectGetDTO {
         this.members = members;
     }
 
-    public List<SprintDTO> getSprints() {
+    public List<SprintGetDTO> getSprints() {
         return sprints;
     }
 
-    public void setSprints(List<SprintDTO> sprints) {
+    public void setSprints(List<SprintGetDTO> sprints) {
         this.sprints = sprints;
     }
 

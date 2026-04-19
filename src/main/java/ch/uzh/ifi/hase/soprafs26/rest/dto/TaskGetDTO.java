@@ -1,6 +1,7 @@
 package ch.uzh.ifi.hase.soprafs26.rest.dto;
 
 import ch.uzh.ifi.hase.soprafs26.constant.Priority;
+import ch.uzh.ifi.hase.soprafs26.constant.TaskStatus;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -14,9 +15,10 @@ public class TaskGetDTO {
     private Priority priority;
     private LocalDateTime dueDate;
     private float timeEstimate;
-    private SprintDTO sprint;
+    private SprintGetDTO sprint;
     private ProjectDTO project;
     private String acceptanceCriteria;
+    private TaskStatus status;
 
     public Long getId() {
         return id;
@@ -82,11 +84,11 @@ public class TaskGetDTO {
         this.timeEstimate = timeEstimate;
     }
 
-    public SprintDTO getSprint() {
+    public SprintGetDTO getSprint() {
         return sprint;
     }
 
-    public void setSprint(SprintDTO sprint) {
+    public void setSprint(SprintGetDTO sprint) {
         this.sprint = sprint;
     }
 
@@ -105,4 +107,11 @@ public class TaskGetDTO {
     public void setAcceptanceCriteria(String acceptanceCriteria) {
         this.acceptanceCriteria = acceptanceCriteria;
     }
+
+    public TaskStatus getStatus() {
+        return status;
+    }
+    public void setStatus(TaskStatus status) {
+        this.status = status;
+}
 }
