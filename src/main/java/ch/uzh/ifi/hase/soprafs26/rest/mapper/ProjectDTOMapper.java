@@ -2,6 +2,7 @@ package ch.uzh.ifi.hase.soprafs26.rest.mapper;
 import ch.uzh.ifi.hase.soprafs26.entity.Project;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.ProjectGetDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.ProjectPostDTO;
+import ch.uzh.ifi.hase.soprafs26.rest.dto.ProjectPutDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
@@ -23,4 +24,8 @@ public interface ProjectDTOMapper {
     @Mapping(source = "tags", target = "tags")
     @Mapping(source = "tasks", target = "tasks")
     ProjectGetDTO convertEntityToProjectGetDTO(Project project);
+
+    @Mapping(source = "name", target = "name")
+    @Mapping(source = "description", target = "description")
+    Project convertProjectPutDTOtoEntity(ProjectPutDTO projectPutDTO);
 }

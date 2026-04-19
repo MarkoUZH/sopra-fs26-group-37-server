@@ -6,6 +6,7 @@ import ch.uzh.ifi.hase.soprafs26.service.UserService;
 import ch.uzh.ifi.hase.soprafs26.entity.Project;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.ProjectGetDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.ProjectPostDTO;
+import ch.uzh.ifi.hase.soprafs26.rest.dto.ProjectPutDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.mapper.ProjectDTOMapper;
 import ch.uzh.ifi.hase.soprafs26.service.ProjectService;
 import org.springframework.http.HttpStatus;
@@ -110,13 +111,14 @@ public class ProjectController {
     @PutMapping("/projects/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public ProjectGetDTO updateProject(@RequestBody ProjectPostDTO projectPostDTO, @PathVariable Long id, @RequestHeader(value = "Authorization", required = false) String token) {
+    public ProjectGetDTO updateProject(@RequestBody ProjectPutDTO projectPutDTO, @PathVariable Long id, @RequestHeader(value = "Authorization", required = false) String token) {
         userService.verifyToken(token);
         Optional<Project> project = projectService.getProjectById(id);
-        Project projectInput = ProjectDTOMapper.INSTANCE.convertProjectPostDTOtoEntity(projectPostDTO);
+        Project projectInput = ProjectDTOMapper.INSTANCE.convertProjectPutDTOtoEntity(projectPutDTO);
+        List<Long> memberIds = projectPutDTO.getMemberIds();
 
         if (project.isPresent()) {
-            return ProjectDTOMapper.INSTANCE.convertEntityToProjectGetDTO(projectService.updateProject(id, projectInput));
+            return ProjectDTOMapper.INSTANCE.convertEntityToProjectGetDTO(projectService.updateProject(id, projectInput, memberIds));
         }
         else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Project with id " + id + " does not exist");

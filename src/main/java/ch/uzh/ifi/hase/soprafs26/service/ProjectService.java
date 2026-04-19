@@ -7,9 +7,12 @@ import ch.uzh.ifi.hase.soprafs26.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.server.ResponseStatusException;
+
 import ch.uzh.ifi.hase.soprafs26.entity.User;
 import ch.uzh.ifi.hase.soprafs26.service.UserService;
 
@@ -64,22 +67,25 @@ public class ProjectService {
         projectRepository.deleteById(id);
     }
 
-    public Project updateProject(Long id, Project newProject)
-    {
-        Optional<Project> oldProject = projectRepository.findById(id);
-        Project updatedProject = oldProject.orElse(newProject);
-        if(oldProject.isPresent())
-        {
-            updatedProject.setName(newProject.getName());
-            updatedProject.setDescription(newProject.getDescription());
+    public Project updateProject(Long id, Project projectInput, List<Long> memberIds) {
+    Project existingProject = projectRepository.findById(id)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Project not found"));
+
+    // Update basic fields
+    existingProject.setName(projectInput.getName());
+    existingProject.setDescription(projectInput.getDescription());
+
+    // Update members only if a list was provided (even an empty one if you allow removing everyone)
+    if (memberIds != null) {
+        List<User> members = new ArrayList<>();
+        for (Long mId : memberIds) {
+            members.add(userService.getUserById(mId));
         }
-        else
-        {
-            log.error("Project with id {} could not be found", id);
-        }
-        projectRepository.save(updatedProject);
-        return updatedProject;
+        existingProject.setMembers(members);
     }
+
+    return projectRepository.save(existingProject);
+}
     public List<Project> getProjectsByUserId(Long userId) {
         User user = userService.getUserById(userId);
         
