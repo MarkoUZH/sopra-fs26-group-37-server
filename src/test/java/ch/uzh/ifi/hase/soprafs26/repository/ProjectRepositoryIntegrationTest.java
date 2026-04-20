@@ -31,12 +31,13 @@ public class ProjectRepositoryIntegrationTest {
 		entityManager.flush();
 
 		// when
-		Optional<Project> found = projectRepository.findById(1L);
+		Optional<Project> found = projectRepository.findById(project.getId());
+
+        Project foundProject = found.get();
 
 		// then
-		assertNotNull(found.get());
-		assertEquals(found.get().getId(), project.getId());
-		assertEquals(found.get().getName(), project.getName());
-		assertEquals(found.get().getDescription(), project.getDescription());
+		assertEquals(foundProject.getId(), project.getId());
+		assertEquals(foundProject.getName(), project.getName());
+		assertEquals(foundProject.getDescription(), project.getDescription());
 	}
 }
