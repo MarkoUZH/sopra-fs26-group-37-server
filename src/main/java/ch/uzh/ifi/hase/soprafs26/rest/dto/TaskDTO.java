@@ -14,6 +14,7 @@ public class TaskDTO {
     private float timeEstimate;
     private String acceptanceCriteria;
     private TaskStatus status;
+    private String originalLanguage;
 
     public Long getId() {
         return id;
@@ -71,11 +72,15 @@ public class TaskDTO {
         this.acceptanceCriteria = acceptanceCriteria;
     }
 
-     public TaskStatus getStatus() {
+    public TaskStatus getStatus() {
         return status;
     }
     public void setStatus(TaskStatus status) {
         this.status = status;
 }
 
+    public String getOriginalLanguage() {
+        return originalLanguage;
+    }
+    public void setOriginalLanguage(String originalLanguage) {}
 }

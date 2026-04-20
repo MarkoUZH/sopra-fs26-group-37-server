@@ -50,7 +50,7 @@ public class TaskController {
         userService.verifyToken(token);
         Task taskInput = TaskDTOMapper.INSTANCE.convertTaskPostDTOtoEntity(taskPostDTO);
 
-        Task createdTask = taskService.createTask(taskInput);
+        Task createdTask = taskService.createTask(taskInput, token);
 
         return TaskDTOMapper.INSTANCE.convertEntityToTaskGetDTO(createdTask);
     }

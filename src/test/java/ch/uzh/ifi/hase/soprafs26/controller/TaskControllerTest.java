@@ -2,6 +2,7 @@ package ch.uzh.ifi.hase.soprafs26.controller;
 
 import ch.uzh.ifi.hase.soprafs26.constant.Priority;
 import ch.uzh.ifi.hase.soprafs26.entity.Task;
+import ch.uzh.ifi.hase.soprafs26.entity.User;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.TaskPostDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.TaskPutDTO;
 import ch.uzh.ifi.hase.soprafs26.service.TaskService;
@@ -24,8 +25,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static ch.uzh.ifi.hase.soprafs26.controller.ProjectControllerTest.createMockUser;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -41,6 +44,7 @@ public class TaskControllerTest {
     @MockitoBean
     private TaskService taskService;
 
+    @Autowired
     @MockitoBean
     private UserService userService;
 
@@ -93,11 +97,14 @@ public class TaskControllerTest {
         taskPostDTO.setDueDate(LocalDateTime.of(2026,1,1,1,1,0));
         taskPostDTO.setTimeEstimate(1.0f);
 
-        given(taskService.createTask(Mockito.any())).willReturn(task);
+        User user = createMockUser();
+
+        given(taskService.createTask(Mockito.any(), eq(user.getToken()))).willReturn(task);
+        given(userService.getUserByToken(eq(user.getToken()))).willReturn(user);
 
         // when/then -> do the request + validate the result
         MockHttpServletRequestBuilder postRequest = post("/tasks").contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(taskPostDTO)).header("Authorization", "Bearer 1");
+                .content(asJsonString(taskPostDTO)).header("Authorization", user.getToken());
 
         // then
         mockMvc.perform(postRequest)
