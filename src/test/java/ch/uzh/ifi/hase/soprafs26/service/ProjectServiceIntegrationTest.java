@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.server.ResponseStatusException;
@@ -21,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @see UserService
  */
 @WebAppConfiguration
-@SpringBootTest
+@SpringBootTest(properties = "HUGGINGFACE_API_TOKEN=mock-key")
 public class ProjectServiceIntegrationTest {
 
 	@Qualifier("projectRepository")
@@ -30,6 +31,9 @@ public class ProjectServiceIntegrationTest {
 
 	@Autowired
 	private ProjectService projectService;
+
+    @Autowired
+    private UserService userService;
 
 	@BeforeEach
 	public void setup() {

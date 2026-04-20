@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
  * @see UserService
  */
 @WebAppConfiguration
-@SpringBootTest
+@SpringBootTest(properties = "HUGGINGFACE_API_TOKEN=mock-key")
 public class TaskServiceIntegrationTest {
 
 	@Qualifier("taskRepository")
