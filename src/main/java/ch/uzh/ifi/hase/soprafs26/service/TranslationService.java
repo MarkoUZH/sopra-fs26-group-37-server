@@ -94,6 +94,7 @@ public class TranslationService {
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setAccept(List.of(MediaType.APPLICATION_JSON));
         headers.set("Authorization", "Bearer " + hfToken);
+        headers.set("X-HF-Bill-To", "UZHedu");
         
         // CRITICAL FIX: Bypass the Hugging Face cache. 
         // If an earlier request without correct parameters just echoed the text, HF will cache that response.
