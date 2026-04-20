@@ -5,6 +5,7 @@ import ch.uzh.ifi.hase.soprafs26.entity.Task;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.TaskPostDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.TaskPutDTO;
 import ch.uzh.ifi.hase.soprafs26.service.TaskService;
+import ch.uzh.ifi.hase.soprafs26.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +41,9 @@ public class TaskControllerTest {
     @MockitoBean
     private TaskService taskService;
 
+    @MockitoBean
+    private UserService userService;
+
     @Test
     public void givenTasks_whenGetTasks_thenReturnJsonArray() throws Exception {
         // given
@@ -56,7 +60,7 @@ public class TaskControllerTest {
         given(taskService.getTasks()).willReturn(allTasks);
 
         // when
-        MockHttpServletRequestBuilder getRequest = get("/tasks").contentType(MediaType.APPLICATION_JSON);
+        MockHttpServletRequestBuilder getRequest = get("/tasks").contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer 1");
 
         // then
         mockMvc.perform(getRequest).andExpect(status().isOk())
@@ -93,7 +97,7 @@ public class TaskControllerTest {
 
         // when/then -> do the request + validate the result
         MockHttpServletRequestBuilder postRequest = post("/tasks").contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(taskPostDTO));
+                .content(asJsonString(taskPostDTO)).header("Authorization", "Bearer 1");
 
         // then
         mockMvc.perform(postRequest)
@@ -118,7 +122,7 @@ public class TaskControllerTest {
         given(taskService.getTaskById(1L)).willReturn(Optional.of(task));
 
         // when
-        MockHttpServletRequestBuilder getRequest = get("/tasks/1").contentType(MediaType.APPLICATION_JSON);
+        MockHttpServletRequestBuilder getRequest = get("/tasks/1").contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer 1");
 
         // then
         mockMvc.perform(getRequest).andExpect(status().isOk())
@@ -145,7 +149,7 @@ public class TaskControllerTest {
         given(taskService.getTaskById(1L)).willReturn(Optional.of(task));
 
         // when
-        MockHttpServletRequestBuilder getRequest = get("/tasks/2").contentType(MediaType.APPLICATION_JSON);
+        MockHttpServletRequestBuilder getRequest = get("/tasks/2").contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer 1");
 
         // then
         mockMvc.perform(getRequest).andExpect(status().isNotFound()).andExpect(jsonPath("$.detail", is("Task with id 2 does not exist")));
@@ -166,7 +170,7 @@ public class TaskControllerTest {
         given(taskService.getTaskById(1L)).willReturn(Optional.of(task));
 
         // when
-        MockHttpServletRequestBuilder deleteRequest = delete("/tasks/1").contentType(MediaType.APPLICATION_JSON);
+        MockHttpServletRequestBuilder deleteRequest = delete("/tasks/1").contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer 1");
 
         // then
         mockMvc.perform(deleteRequest).andExpect(status().isOk());
@@ -187,7 +191,7 @@ public class TaskControllerTest {
         given(taskService.getTaskById(1L)).willReturn(Optional.of(task));
 
         // when
-        MockHttpServletRequestBuilder deleteRequest = delete("/tasks/2").contentType(MediaType.APPLICATION_JSON);
+        MockHttpServletRequestBuilder deleteRequest = delete("/tasks/2").contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer 1");
 
         // then
         mockMvc.perform(deleteRequest).andExpect(status().isNotFound());
@@ -227,7 +231,7 @@ public class TaskControllerTest {
 
         // when/then -> do the request + validate the result
         MockHttpServletRequestBuilder putRequest = put("/tasks/1").contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(taskPutDTO));
+                .content(asJsonString(taskPutDTO)).header("Authorization", "Bearer 1");
 
         // then
         mockMvc.perform(putRequest)

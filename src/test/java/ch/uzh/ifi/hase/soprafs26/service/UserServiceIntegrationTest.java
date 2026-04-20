@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @see UserService
  */
 @WebAppConfiguration
-@SpringBootTest
+@SpringBootTest(properties = "HUGGINGFACE_API_TOKEN=mock-key")
 public class UserServiceIntegrationTest {
 
 	@Qualifier("userRepository")
@@ -43,6 +43,8 @@ public class UserServiceIntegrationTest {
 		User testUser = new User();
 		
 		testUser.setUsername("testUsername");
+        testUser.setPassword("testPassword");
+        testUser.setName("testName");
         testUser.setEmail("email@test.com");
         testUser.setPassword("password");
         testUser.setLanguage("German");
@@ -65,6 +67,8 @@ public class UserServiceIntegrationTest {
 
 		User testUser = new User();
         testUser.setUsername("testUsername");
+        testUser.setPassword("testPassword");
+        testUser.setName("testName");
         testUser.setEmail("email@test.com");
         testUser.setPassword("password");
         testUser.setLanguage("German");

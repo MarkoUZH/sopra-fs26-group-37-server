@@ -20,6 +20,7 @@ import org.springframework.web.server.ResponseStatusException;
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.ObjectMapper;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -185,8 +186,11 @@ public void createProject_validInput_projectCreated() throws Exception {
         projectUpdated.setName("Test Project Updated");
         projectUpdated.setDescription("Test Description Updated");
 
+        List<Long> memberIds = new ArrayList<>();
+        memberIds.add(1L);
+
         given(projectService.getProjectById(1L)).willReturn(Optional.of(project));
-        given(projectService.updateProject(1L, projectUpdated)).willReturn(projectUpdated);
+        given(projectService.updateProject(1L, projectUpdated, memberIds)).willReturn(projectUpdated);
 
         // when/then -> do the request + validate the result
         MockHttpServletRequestBuilder putRequest = put("/projects/1").contentType(MediaType.APPLICATION_JSON)
