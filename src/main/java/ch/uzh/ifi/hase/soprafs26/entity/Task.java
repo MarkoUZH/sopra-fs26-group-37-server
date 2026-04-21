@@ -11,6 +11,7 @@ import java.util.List;
 @Table(name = "tasks")
 public class Task {
     @Id
+    @GeneratedValue
     private Long id;
     private String name;
     private String description;
@@ -23,15 +24,12 @@ public class Task {
     private LocalDateTime dueDate;
     private float timeEstimate;
     @ManyToOne
-    private Sprint sprint;
-    @ManyToOne
     @JoinTable(
         name = "project_tasks",
         joinColumns = @JoinColumn(name = "task_id"),
         inverseJoinColumns = @JoinColumn(name = "project_id")
     )
     private Project project;
-    private String acceptanceCriteria;
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private TaskStatus status = TaskStatus.TODO;
@@ -45,9 +43,7 @@ public class Task {
         this.dueDate = dueDate;
         this.status = status;
         this.timeEstimate = timeEstimate;
-        this.sprint = sprint;
         this.project = project;
-        this.acceptanceCriteria = acceptanceCriteria;
     }
 
     public Task() {
@@ -116,22 +112,6 @@ public class Task {
 
     public void setTimeEstimate(float timeEstimate) {
         this.timeEstimate = timeEstimate;
-    }
-
-    public Sprint getSprint() {
-        return sprint;
-    }
-
-    public void setSprint(Sprint sprint) {
-        this.sprint = sprint;
-    }
-
-    public String getAcceptanceCriteria() {
-        return acceptanceCriteria;
-    }
-
-    public void setAcceptanceCriteria(String acceptanceCriteria) {
-        this.acceptanceCriteria = acceptanceCriteria;
     }
 
     public Project getProject() {

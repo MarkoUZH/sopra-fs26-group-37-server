@@ -15,9 +15,7 @@ public class TaskGetDTO {
     private Priority priority;
     private LocalDateTime dueDate;
     private float timeEstimate;
-    private SprintGetDTO sprint;
     private ProjectDTO project;
-    private String acceptanceCriteria;
     private TaskStatus status;
 
     public Long getId() {
@@ -84,28 +82,12 @@ public class TaskGetDTO {
         this.timeEstimate = timeEstimate;
     }
 
-    public SprintGetDTO getSprint() {
-        return sprint;
-    }
-
-    public void setSprint(SprintGetDTO sprint) {
-        this.sprint = sprint;
-    }
-
     public ProjectDTO getProject() {
         return project;
     }
 
     public void setProject(ProjectDTO project) {
         this.project = project;
-    }
-
-    public String getAcceptanceCriteria() {
-        return acceptanceCriteria;
-    }
-
-    public void setAcceptanceCriteria(String acceptanceCriteria) {
-        this.acceptanceCriteria = acceptanceCriteria;
     }
 
     public TaskStatus getStatus() {

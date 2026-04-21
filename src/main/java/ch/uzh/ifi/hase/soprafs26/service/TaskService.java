@@ -52,12 +52,10 @@ public class TaskService {
         {
             updatedTask.setName(oldTask.get().getName());
             updatedTask.setDescription(oldTask.get().getDescription());
-            updatedTask.setAcceptanceCriteria(oldTask.get().getAcceptanceCriteria());
             updatedTask.setAssignedUsers(oldTask.get().getAssignedUsers());
             updatedTask.setPriority(oldTask.get().getPriority());
             updatedTask.setTags(oldTask.get().getTags());
             updatedTask.setDueDate(oldTask.get().getDueDate());
-            updatedTask.setSprint(oldTask.get().getSprint());
             updatedTask.setTimeEstimate(oldTask.get().getTimeEstimate());
         }
         else

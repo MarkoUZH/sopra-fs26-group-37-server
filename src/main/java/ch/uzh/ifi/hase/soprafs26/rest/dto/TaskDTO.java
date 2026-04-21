@@ -12,7 +12,6 @@ public class TaskDTO {
     private Priority priority;
     private LocalDateTime dueDate;
     private float timeEstimate;
-    private String acceptanceCriteria;
     private TaskStatus status;
 
     public Long getId() {
@@ -61,14 +60,6 @@ public class TaskDTO {
 
     public void setTimeEstimate(float timeEstimate) {
         this.timeEstimate = timeEstimate;
-    }
-
-    public String getAcceptanceCriteria() {
-        return acceptanceCriteria;
-    }
-
-    public void setAcceptanceCriteria(String acceptanceCriteria) {
-        this.acceptanceCriteria = acceptanceCriteria;
     }
 
      public TaskStatus getStatus() {
