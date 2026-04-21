@@ -42,6 +42,7 @@ public interface TaskDTOMapper {
     @Mapping(source = "description", target = "description")
     @Mapping(source = "priority", target = "priority")
     @Mapping(source = "dueDate", target = "dueDate")
+    @Mapping(source = "status", target = "status")
     @Mapping(source = "timeEstimate", target = "timeEstimate")
     @Mapping(source = "tagIds", target = "tags", qualifiedByName = "idsToTags")
     @Mapping(source = "assignedUserIds", target = "assignedUsers", qualifiedByName = "idsToUsers")
