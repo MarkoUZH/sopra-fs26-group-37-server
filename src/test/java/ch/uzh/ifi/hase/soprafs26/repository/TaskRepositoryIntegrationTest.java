@@ -28,7 +28,6 @@ public class TaskRepositoryIntegrationTest {
 	public void findById_success() {
 		// given
         Task task = new Task();
-        task.setId(1L);
         task.setName("Test Task");
         task.setDescription("Test Description");
         task.setTimeEstimate(1.0f);

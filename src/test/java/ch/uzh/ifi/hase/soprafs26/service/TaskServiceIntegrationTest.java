@@ -7,6 +7,7 @@ import ch.uzh.ifi.hase.soprafs26.entity.User;
 import ch.uzh.ifi.hase.soprafs26.repository.ProjectRepository;
 import ch.uzh.ifi.hase.soprafs26.repository.TaskRepository;
 import ch.uzh.ifi.hase.soprafs26.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -25,11 +27,16 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @WebAppConfiguration
 @SpringBootTest(properties = "HUGGINGFACE_API_TOKEN=mock-key")
+@Transactional
 public class TaskServiceIntegrationTest {
 
 	@Qualifier("taskRepository")
 	@Autowired
 	private TaskRepository taskRepository;
+
+    @Qualifier("userRepository")
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     UserService userService;
@@ -37,20 +44,20 @@ public class TaskServiceIntegrationTest {
 	@Autowired
 	private TaskService taskService;
 
-	@BeforeEach
-	public void setup() {
-		taskRepository.deleteAll();
-	}
+    @BeforeEach
+    public void setup() {
+        taskRepository.deleteAll();
+        userRepository.deleteAll();
+    }
 
 	@Test
 	public void createTask_validInputs_success() {
 		// given
-		assertFalse(taskRepository.findById(1L).isPresent());
+        assertEquals(0, taskRepository.count());
 
         User user = userService.createUser(createMockUser());
 
         Task task = new Task();
-        task.setId(1L);
         task.setName("Test Task");
         task.setDescription("Test Description");
         task.setTimeEstimate(1.0f);
@@ -69,12 +76,12 @@ public class TaskServiceIntegrationTest {
 
     private User createMockUser(){
         User user = new User();
-        user.setUsername("loginUser");
-        user.setName("TEST USER");
-        user.setPassword("TEST PASSWORD");
+        user.setToken(UUID.randomUUID().toString());
+        user.setEmail(UUID.randomUUID() + "@test.com");
+        user.setUsername("user_" + UUID.randomUUID());
+        user.setPassword("password");
+        user.setName("user_" + UUID.randomUUID());
         user.setManager(true);
-        user.setEmail("email@test.com");
-        user.setToken("token");
         user.setLanguage("DE");
 
         return user;

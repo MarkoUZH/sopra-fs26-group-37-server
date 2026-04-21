@@ -21,115 +21,117 @@ import java.util.List;
 @Table(name = "users")
 public class User implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Id
-	@GeneratedValue
-	private Long id;
+    @Id
+    @GeneratedValue
+    private Long id;
 
-	@Column(nullable = false)
-	private String email;
+    @Column(nullable = false, unique = true)
+    private String email;
 
-	@Column(nullable = false, unique = true)
-	private String username;
+    @Column(nullable = false, unique = true)
+    private String username;
 
-	@Column(nullable = false)
-	private String name;
+    @Column(nullable = false)
+    private String name;
 
-	@Column(nullable = false, unique = true)
-	private String token;
+    @Column(nullable = false, unique = true)
+    private String token;
 
-	@Column(nullable = false)
-	private UserStatus status;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private UserStatus status;
 
-  @ManyToMany(mappedBy = "members")
-  private List<Project> projects;
+    @ManyToMany(mappedBy = "members")
+    private List<Project> projects;
 
-  @OneToMany(mappedBy = "owner")
-  private List<Project> ownedProjects;
+    @OneToMany(mappedBy = "owner")
+    private List<Project> ownedProjects;
 
-  @ManyToMany(mappedBy = "assignedUsers")
-  private List<Task> tasks;
-  
-	@Column(nullable = false)
-	private String password;
+    @ManyToMany(mappedBy = "assignedUsers")
+    private List<Task> tasks;
 
-	@Column(nullable = false)
-	private String language;
-	
-	@Column(nullable = false)
-	private boolean manager;
+    @Column(nullable = false)
+    private String password;
 
-	public Long getId() {
-		return id;
-	}
+    @Column(nullable = false)
+    private String language;
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    @Column(nullable = false)
+    private boolean manager;
 
-	public String getEmail() {
-		return email;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public String getUsername() {
-		return username;
-	}
+    public String getEmail() {
+        return email;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-	public String setName(String name) {
-		return this.name = name;
-	}
-	
+    public String getUsername() {
+        return username;
+    }
 
-	public void setUsername(String username) {
-		this.username = username;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public String getToken() {
-		return token;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setToken(String token) {
-		this.token = token;
-	}
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
-	public UserStatus getStatus() {
-		return status;
-	}
+    public String getToken() {
+        return token;
+    }
 
-	public void setStatus(UserStatus status) {
-		this.status = status;
-	}
+    public void setToken(String token) {
+        this.token = token;
+    }
 
-	public String getPassword() {
-		return password;
-	}
+    public UserStatus getStatus() {
+        return status;
+    }
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
+    public void setStatus(UserStatus status) {
+        this.status = status;
+    }
 
-	public String getLanguage() {
-		return language;
-	}
+    public String getPassword() {
+        return password;
+    }
 
-	public void setLanguage(String language) {
-		this.language = language;
-	}
-	public boolean getManager() {
-		return manager;
-	}
-	public void setManager(boolean manager) {
-		this.manager = manager;
-	}
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+
+    public boolean getManager() {
+        return manager;
+    }
+
+    public void setManager(boolean manager) {
+        this.manager = manager;
+    }
 
 
     public List<Project> getProjects() {
