@@ -123,6 +123,10 @@ public class UserService {
         existingUser.setPassword(userUpdates.getPassword());
     }
 
+	if (userUpdates.getLanguage() != null) {
+        existingUser.setLanguage(userUpdates.getLanguage());
+    }
+
     userRepository.save(existingUser);
     userRepository.flush();
 }
