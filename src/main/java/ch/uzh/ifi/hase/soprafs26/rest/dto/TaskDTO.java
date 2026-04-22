@@ -12,7 +12,6 @@ public class TaskDTO {
     private Priority priority;
     private LocalDateTime dueDate;
     private float timeEstimate;
-    private String acceptanceCriteria;
     private TaskStatus status;
     private String originalLanguage;
 
@@ -64,15 +63,7 @@ public class TaskDTO {
         this.timeEstimate = timeEstimate;
     }
 
-    public String getAcceptanceCriteria() {
-        return acceptanceCriteria;
-    }
-
-    public void setAcceptanceCriteria(String acceptanceCriteria) {
-        this.acceptanceCriteria = acceptanceCriteria;
-    }
-
-    public TaskStatus getStatus() {
+     public TaskStatus getStatus() {
         return status;
     }
     public void setStatus(TaskStatus status) {
