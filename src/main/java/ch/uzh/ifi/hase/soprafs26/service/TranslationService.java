@@ -15,7 +15,7 @@ import java.util.Map;
 @Service
 public class TranslationService {
 
-    @Value("${HUGGINGFACE_API_TOKEN}")
+    @Value("${huggingface.api.token}")
     private String hfToken;
 
     private final RestTemplate restTemplate = new RestTemplate();
