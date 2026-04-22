@@ -26,10 +26,12 @@ public class TaskService {
 	private final Logger log = LoggerFactory.getLogger(TaskService.class);
     private final UserRepository userRepository;
 	private final TaskRepository taskRepository;
+    private final UserService userService;
 
-	public TaskService(@Qualifier("taskRepository") TaskRepository taskRepository, @Qualifier("userRepository") UserRepository userRepository   ) {
+	public TaskService(@Qualifier("taskRepository") TaskRepository taskRepository, @Qualifier("userRepository") UserRepository userRepository, @Qualifier("userService") UserService userService   ) {
 		this.taskRepository = taskRepository;
-        this.userRepository = userRepository;   
+        this.userRepository = userRepository;
+        this.userService = userService;
 	}
 
     public List<Task> getTasks()
