@@ -395,7 +395,7 @@ public void createProject_validInput_projectCreated() throws Exception {
         }
     }
 
-    private User createMockUser(){
+    public static User createMockUser(){
         User user = new User();
         user.setId(1L);
         user.setUsername("loginUser");

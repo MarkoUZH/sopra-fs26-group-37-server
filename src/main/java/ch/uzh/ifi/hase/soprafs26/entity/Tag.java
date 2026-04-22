@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name = "tags")
 public class Tag {
     @Id
     @GeneratedValue
@@ -14,6 +13,11 @@ public class Tag {
     @ManyToOne
     private Project project;
     @ManyToMany
+    @JoinTable(
+            name = "task_tags",
+            joinColumns = @JoinColumn(name = "tag_id"),
+            inverseJoinColumns = @JoinColumn(name = "task_id")
+    )
     private List<Task> tasks;
 
     public Tag() {

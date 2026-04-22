@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name = "projects")
 public class Project {
 
     @Id
@@ -13,12 +12,7 @@ public class Project {
     private Long id;
     private String name;
     private String description;
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinTable(
-            name = "project_tasks",
-            joinColumns = @JoinColumn(name = "project_id"), // FK to projects table
-        inverseJoinColumns = @JoinColumn(name = "task_id")
-    )
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Task> tasks;
     @ManyToOne
     @JoinColumn(name = "owner_id")
@@ -30,9 +24,11 @@ public class Project {
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
     private List<User> members;
-    @OneToMany
+
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Sprint> sprints;
-    @OneToMany
+
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Tag> tags;
 
     public Project() {

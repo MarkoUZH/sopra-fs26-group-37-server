@@ -1,6 +1,7 @@
 package ch.uzh.ifi.hase.soprafs26.repository;
 
 import ch.uzh.ifi.hase.soprafs26.constant.Priority;
+import ch.uzh.ifi.hase.soprafs26.constant.TaskStatus;
 import ch.uzh.ifi.hase.soprafs26.entity.Project;
 import ch.uzh.ifi.hase.soprafs26.entity.Task;
 import org.junit.jupiter.api.Test;
@@ -27,13 +28,14 @@ public class TaskRepositoryIntegrationTest {
 	public void findById_success() {
 		// given
         Task task = new Task();
-        task.setId(1L);
         task.setName("Test Task");
         task.setDescription("Test Description");
         task.setTimeEstimate(1.0f);
         task.setDueDate(LocalDateTime.of(2026,1,1,1,1,0));
         task.setAcceptanceCriteria("Good Code");
         task.setPriority(Priority.MEDIUM);
+        task.setStatus(TaskStatus.IN_PROGRESS);
+        task.setOriginalLanguage("DE");
 
 		entityManager.persist(task);
 		entityManager.flush();
@@ -46,5 +48,8 @@ public class TaskRepositoryIntegrationTest {
 		assertEquals(found.get().getId(), task.getId());
 		assertEquals(found.get().getName(), task.getName());
 		assertEquals(found.get().getDescription(), task.getDescription());
+		assertEquals(found.get().getOriginalLanguage(), task.getOriginalLanguage());
+		assertEquals(found.get().getPriority(), task.getPriority());
+		assertEquals(found.get().getStatus(), task.getStatus());
 	}
 }

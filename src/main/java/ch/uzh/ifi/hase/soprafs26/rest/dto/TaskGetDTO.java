@@ -19,6 +19,7 @@ public class TaskGetDTO {
     private ProjectDTO project;
     private String acceptanceCriteria;
     private TaskStatus status;
+    private String originalLanguage;
 
     public Long getId() {
         return id;
@@ -114,4 +115,9 @@ public class TaskGetDTO {
     public void setStatus(TaskStatus status) {
         this.status = status;
 }
+
+    public String getOriginalLanguage() {
+        return originalLanguage;
+    }
+    public void setOriginalLanguage(String originalLanguage) {}
 }

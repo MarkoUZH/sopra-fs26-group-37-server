@@ -5,49 +5,53 @@ import ch.uzh.ifi.hase.soprafs26.constant.TaskStatus;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "tasks")
 public class Task {
     @Id
+    @GeneratedValue
     private Long id;
     private String name;
     private String description;
-    @ManyToMany
+    @ManyToMany(mappedBy = "tasks", fetch = FetchType.LAZY)
     private List<Tag> tags;
     @ManyToMany
-    private List<User> assignedUsers;
+    @JoinTable(
+            name = "task_assigned_users",
+            joinColumns = @JoinColumn(name = "task_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    private List<User> assignedUsers = new ArrayList<>();
     @Enumerated(EnumType.STRING)
     private Priority priority;
     private LocalDateTime dueDate;
     private float timeEstimate;
+    private String originalLanguage;
     @ManyToOne
     private Sprint sprint;
     @ManyToOne
-    @JoinTable(
-        name = "project_tasks",
-        joinColumns = @JoinColumn(name = "task_id"),
-        inverseJoinColumns = @JoinColumn(name = "project_id")
-    )
+    @JoinColumn(name = "project_id")
     private Project project;
     private String acceptanceCriteria;
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private TaskStatus status = TaskStatus.TODO;
 
-    public Task(String name, String description, List<Tag> tags, List<User> assignedUsers, Priority priority, LocalDateTime dueDate, float timeEstimate, Sprint sprint, Project project, String acceptanceCriteria, TaskStatus status) {
+    public Task(String name, String description, List<Tag> tags, List<User> assignedUsers, Priority priority, LocalDateTime dueDate, float timeEstimate, String originalLanguage, Sprint sprint, Project project, String acceptanceCriteria, TaskStatus status) {
         this.name = name;
         this.description = description;
         this.tags = tags;
         this.assignedUsers = assignedUsers;
         this.priority = priority;
         this.dueDate = dueDate;
-        this.status = status;
         this.timeEstimate = timeEstimate;
+        this.originalLanguage = originalLanguage;
         this.sprint = sprint;
         this.project = project;
         this.acceptanceCriteria = acceptanceCriteria;
+        this.status = status;
     }
 
     public Task() {
@@ -148,5 +152,13 @@ public class Task {
 
     public void setStatus(TaskStatus status) {
         this.status = status;
+    }
+
+    public String getOriginalLanguage() {
+        return originalLanguage;
+    }
+
+    public void setOriginalLanguage(String originalLanguage) {
+        this.originalLanguage = originalLanguage;
     }
 }
