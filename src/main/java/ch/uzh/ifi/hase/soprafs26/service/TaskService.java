@@ -2,9 +2,11 @@ package ch.uzh.ifi.hase.soprafs26.service;
 
 import ch.uzh.ifi.hase.soprafs26.entity.Project;
 import ch.uzh.ifi.hase.soprafs26.entity.Task;
+import ch.uzh.ifi.hase.soprafs26.entity.User;
 import ch.uzh.ifi.hase.soprafs26.repository.TaskRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -35,8 +37,10 @@ public class TaskService {
         return taskRepository.findAll();
     }
 
-    public Task createTask(Task task)
+    public Task createTask(Task task, String token)
     {
+        User user = userService.getUserByToken(token);
+        task.setOriginalLanguage(user.getLanguage());
         return taskRepository.save(task);
     }
 

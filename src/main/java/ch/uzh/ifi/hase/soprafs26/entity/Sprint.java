@@ -3,24 +3,25 @@ package ch.uzh.ifi.hase.soprafs26.entity;
 import ch.uzh.ifi.hase.soprafs26.constant.SprintStatus;
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 @Entity
-@Table(name = "sprints")
 public class Sprint {
 
     @Id
     @GeneratedValue
     private Long id;
     private String name;
+    @Enumerated
     private SprintStatus sprintStatus;
     private Date startTime;
     private Date endTime;
     @ManyToOne
     private Project project;
-    @OneToMany
-    private List<Task> tasks;
+    @OneToMany(mappedBy = "sprint", cascade = CascadeType.ALL)
+    private List<Task> tasks = new ArrayList<>();
 
     public Sprint() {
 

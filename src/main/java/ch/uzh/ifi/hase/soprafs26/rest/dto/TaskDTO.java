@@ -13,6 +13,7 @@ public class TaskDTO {
     private LocalDateTime dueDate;
     private float timeEstimate;
     private TaskStatus status;
+    private String originalLanguage;
 
     public Long getId() {
         return id;
@@ -69,4 +70,8 @@ public class TaskDTO {
         this.status = status;
 }
 
+    public String getOriginalLanguage() {
+        return originalLanguage;
+    }
+    public void setOriginalLanguage(String originalLanguage) {}
 }

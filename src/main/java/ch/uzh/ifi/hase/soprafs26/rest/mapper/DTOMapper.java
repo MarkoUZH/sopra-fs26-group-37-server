@@ -49,11 +49,11 @@ public interface DTOMapper {
 	@Mapping(source = "username", target = "username")
 	@Mapping(source = "password", target = "password")
 	@Mapping(source = "name", target = "name")
+	@Mapping(source = "language", target = "language")
 	@Mapping(target = "id", ignore = true)
 	@Mapping(target = "email", ignore = true)
 	@Mapping(target = "token", ignore = true)
 	@Mapping(target = "status", ignore = true)
-	@Mapping(target = "language", ignore = true)
 	@Mapping(target = "manager", ignore = true)
 User convertUserPutDTOtoEntity(UserPutDTO userPutDTO);
 }
