@@ -2,7 +2,7 @@ package ch.uzh.ifi.hase.soprafs26.rest.dto;
 
 import ch.uzh.ifi.hase.soprafs26.constant.Priority;
 import ch.uzh.ifi.hase.soprafs26.constant.TaskStatus;
-
+import java.util.List;
 import java.time.LocalDateTime;
 
 public class TaskDTO {
@@ -12,6 +12,7 @@ public class TaskDTO {
     private Priority priority;
     private LocalDateTime dueDate;
     private float timeEstimate;
+    private List<UserGetDTO> assignedUsers;
     private TaskStatus status;
     private String originalLanguage;
 
@@ -74,4 +75,12 @@ public class TaskDTO {
         return originalLanguage;
     }
     public void setOriginalLanguage(String originalLanguage) {}
+
+    public List<UserGetDTO> getAssignedUsers() {
+        return assignedUsers;
+    }
+
+    public void setAssignedUsers(List<UserGetDTO> assignedUsers) {
+        this.assignedUsers = assignedUsers;
+    }
 }

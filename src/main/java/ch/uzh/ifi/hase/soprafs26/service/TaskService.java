@@ -66,6 +66,7 @@ public class TaskService {
     existingTask.setPriority(newTask.getPriority());
     existingTask.setDueDate(newTask.getDueDate());
     existingTask.setTimeEstimate(newTask.getTimeEstimate());
+    existingTask.setAssignedUsers(newTask.getAssignedUsers());
 
     return taskRepository.save(existingTask);
 }
