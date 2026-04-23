@@ -45,4 +45,36 @@ public class SprintService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, 
                     "Sprint with ID " + id + " was not found"));
     }
+
+public Sprint updateSprint(Long sprintId, Sprint updatedSprint) {
+    Sprint existingSprint = getSprintById(sprintId);
+
+    // Only update fields if they are provided (Null-safe update)
+    if (updatedSprint.getName() != null) {
+        existingSprint.setName(updatedSprint.getName());
+    }
+    if (updatedSprint.getSprintStatus() != null) {
+        existingSprint.setSprintStatus(updatedSprint.getSprintStatus());
+    }
+    if (updatedSprint.getStartTime() != null) {
+        existingSprint.setStartTime(updatedSprint.getStartTime());
+    }
+    if (updatedSprint.getEndTime() != null) {
+        existingSprint.setEndTime(updatedSprint.getEndTime());
+    }
+
+    if (updatedSprint.getProject() != null) {
+        existingSprint.setProject(updatedSprint.getProject());
+    }
+
+    // Save and return
+    return sprintRepository.save(existingSprint);
+}
+
+public void deleteSprint(Long sprintId) {
+    Sprint existingSprint = getSprintById(sprintId);
+    sprintRepository.delete(existingSprint);
+}
+
+
 }
