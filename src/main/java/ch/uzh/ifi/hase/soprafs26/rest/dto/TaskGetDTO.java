@@ -17,7 +17,6 @@ public class TaskGetDTO {
     private float timeEstimate;
     private SprintGetDTO sprint;
     private ProjectDTO project;
-    private String acceptanceCriteria;
     private TaskStatus status;
     private String originalLanguage;
 
@@ -99,14 +98,6 @@ public class TaskGetDTO {
 
     public void setProject(ProjectDTO project) {
         this.project = project;
-    }
-
-    public String getAcceptanceCriteria() {
-        return acceptanceCriteria;
-    }
-
-    public void setAcceptanceCriteria(String acceptanceCriteria) {
-        this.acceptanceCriteria = acceptanceCriteria;
     }
 
     public TaskStatus getStatus() {

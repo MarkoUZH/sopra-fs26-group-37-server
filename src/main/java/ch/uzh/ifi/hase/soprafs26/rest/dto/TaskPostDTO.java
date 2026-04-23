@@ -15,7 +15,7 @@ public class TaskPostDTO {
     private float timeEstimate;
     private Long sprintId;
     private Long projectId;
-    private String acceptanceCriteria;
+    private String originalLanguage;
 
     public String getName() {
         return name;
@@ -89,11 +89,11 @@ public class TaskPostDTO {
         this.projectId = projectId;
     }
 
-    public String getAcceptanceCriteria() {
-        return acceptanceCriteria;
+    public String getOriginalLanguage() {
+        return originalLanguage;
     }
 
-    public void setAcceptanceCriteria(String acceptanceCriteria) {
-        this.acceptanceCriteria = acceptanceCriteria;
+    public void setOriginalLanguage(String originalLanguage) {
+        this.originalLanguage = originalLanguage;
     }
 }

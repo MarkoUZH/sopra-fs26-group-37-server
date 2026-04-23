@@ -34,12 +34,11 @@ public class Task {
     @ManyToOne
     @JoinColumn(name = "project_id")
     private Project project;
-    private String acceptanceCriteria;
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private TaskStatus status = TaskStatus.TODO;
 
-    public Task(String name, String description, List<Tag> tags, List<User> assignedUsers, Priority priority, LocalDateTime dueDate, float timeEstimate, String originalLanguage, Sprint sprint, Project project, String acceptanceCriteria, TaskStatus status) {
+    public Task(String name, String description, List<Tag> tags, List<User> assignedUsers, Priority priority, LocalDateTime dueDate, float timeEstimate, String originalLanguage, Sprint sprint, Project project, TaskStatus status) {
         this.name = name;
         this.description = description;
         this.tags = tags;
@@ -50,7 +49,6 @@ public class Task {
         this.originalLanguage = originalLanguage;
         this.sprint = sprint;
         this.project = project;
-        this.acceptanceCriteria = acceptanceCriteria;
         this.status = status;
     }
 
@@ -128,14 +126,6 @@ public class Task {
 
     public void setSprint(Sprint sprint) {
         this.sprint = sprint;
-    }
-
-    public String getAcceptanceCriteria() {
-        return acceptanceCriteria;
-    }
-
-    public void setAcceptanceCriteria(String acceptanceCriteria) {
-        this.acceptanceCriteria = acceptanceCriteria;
     }
 
     public Project getProject() {

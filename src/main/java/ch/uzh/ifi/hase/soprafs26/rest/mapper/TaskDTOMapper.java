@@ -25,7 +25,7 @@ public interface TaskDTOMapper {
     @Mapping(source = "timeEstimate", target = "timeEstimate")
     @Mapping(source = "sprint", target = "sprint")
     @Mapping(source = "project", target = "project")
-    @Mapping(source = "acceptanceCriteria", target = "acceptanceCriteria")
+    @Mapping(source = "originalLanguage", target = "originalLanguage")
     @Mapping(source = "status", target = "status")
     TaskGetDTO convertEntityToTaskGetDTO(Task task);
 
@@ -34,7 +34,7 @@ public interface TaskDTOMapper {
     @Mapping(source = "priority", target = "priority")
     @Mapping(source = "dueDate", target = "dueDate")
     @Mapping(source = "timeEstimate", target = "timeEstimate")
-    @Mapping(source = "acceptanceCriteria", target = "acceptanceCriteria")
+    @Mapping(source = "originalLanguage", target = "originalLanguage")
     @Mapping(source = "sprintId", target = "sprint.id")
     @Mapping(source = "projectId", target = "project.id")
     @Mapping(source = "tagIds", target = "tags", qualifiedByName = "idsToTags")
@@ -47,7 +47,7 @@ public interface TaskDTOMapper {
     @Mapping(source = "priority", target = "priority")
     @Mapping(source = "dueDate", target = "dueDate")
     @Mapping(source = "timeEstimate", target = "timeEstimate")
-    @Mapping(source = "acceptanceCriteria", target = "acceptanceCriteria")
+    @Mapping(source = "originalLanguage", target = "originalLanguage")
     @Mapping(source = "sprintId", target = "sprint.id")
     @Mapping(source = "tagIds", target = "tags", qualifiedByName = "idsToTags")
     @Mapping(source = "assignedUserIds", target = "assignedUsers", qualifiedByName = "idsToUsers")
