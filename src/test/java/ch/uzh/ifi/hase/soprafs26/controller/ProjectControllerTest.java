@@ -264,7 +264,7 @@ public void createProject_validInput_projectCreated() throws Exception {
     // GET /projects/{id}/sprints
     // -------------------------------------------------------------------------
 
-    /*@Test
+    @Test
     public void getSprintsByProject_validProject_thenReturnSprints() throws Exception {
         // given
         Sprint sprint = new Sprint();
@@ -321,7 +321,7 @@ public void createProject_validInput_projectCreated() throws Exception {
         mockMvc.perform(getRequest)
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.detail", is("Project with id 99 does not exist")));
-    }*/
+    }
 
     // -------------------------------------------------------------------------
     // GET /projects/{id}/tags
