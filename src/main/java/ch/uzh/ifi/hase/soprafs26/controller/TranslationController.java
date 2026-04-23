@@ -9,11 +9,9 @@ import java.util.Map;
 public class TranslationController {
 
     private final TranslationService translationService;
-    private final UserService userService;
 
-    public TranslationController(TranslationService translationService, UserService userService) {
+    public TranslationController(TranslationService translationService) {
         this.translationService = translationService;
-        this.userService= userService;
     }
 
     /**

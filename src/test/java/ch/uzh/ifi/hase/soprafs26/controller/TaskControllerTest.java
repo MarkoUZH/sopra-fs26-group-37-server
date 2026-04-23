@@ -56,7 +56,7 @@ public class TaskControllerTest {
         task.setDescription("Test Description");
         task.setTimeEstimate(1.0f);
         task.setDueDate(LocalDateTime.of(2026,1,1,1,1,1));
-        task.setAcceptanceCriteria("Good Code");
+        task.setOriginalLanguage("EN");
         task.setPriority(Priority.MEDIUM);
 
         List<Task> allTasks = Collections.singletonList(task);
@@ -72,7 +72,7 @@ public class TaskControllerTest {
                 .andExpect(jsonPath("$[0].name", is(task.getName())))
                 .andExpect(jsonPath("$[0].timeEstimate", is((double) task.getTimeEstimate())))
                 .andExpect(jsonPath("$[0].dueDate", is(task.getDueDate().toString())))
-                .andExpect(jsonPath("$[0].acceptanceCriteria", is(task.getAcceptanceCriteria())))
+                .andExpect(jsonPath("$[0].originalLanguage", is(task.getOriginalLanguage())))
                 .andExpect(jsonPath("$[0].priority", is(task.getPriority().toString())))
                 .andExpect(jsonPath("$[0].description", is(task.getDescription())));
     }
@@ -86,13 +86,13 @@ public class TaskControllerTest {
         task.setDescription("Test Description");
         task.setTimeEstimate(1.0f);
         task.setDueDate(LocalDateTime.of(2026,1,1,1,1,0));
-        task.setAcceptanceCriteria("Good Code");
+        task.setOriginalLanguage("EN");
         task.setPriority(Priority.MEDIUM);
 
         TaskPostDTO taskPostDTO = new TaskPostDTO();
         taskPostDTO.setName("Test Project");
         taskPostDTO.setDescription("Test Description");
-        taskPostDTO.setAcceptanceCriteria("Good Code");
+        taskPostDTO.setOriginalLanguage("EN");
         taskPostDTO.setPriority(Priority.MEDIUM);
         taskPostDTO.setDueDate(LocalDateTime.of(2026,1,1,1,1,0));
         taskPostDTO.setTimeEstimate(1.0f);
@@ -123,7 +123,7 @@ public class TaskControllerTest {
         task.setDescription("Test Description");
         task.setTimeEstimate(1.0f);
         task.setDueDate(LocalDateTime.of(2026,1,1,1,1,1));
-        task.setAcceptanceCriteria("Good Code");
+        task.setOriginalLanguage("EN");
         task.setPriority(Priority.MEDIUM);
 
         given(taskService.getTaskById(1L)).willReturn(Optional.of(task));
@@ -136,7 +136,7 @@ public class TaskControllerTest {
                 .andExpect(jsonPath("$.name", is(task.getName())))
                 .andExpect(jsonPath("$.timeEstimate", is((double) task.getTimeEstimate())))
                 .andExpect(jsonPath("$.dueDate", is(task.getDueDate().toString())))
-                .andExpect(jsonPath("$.acceptanceCriteria", is(task.getAcceptanceCriteria())))
+                .andExpect(jsonPath("$.originalLanguage", is(task.getOriginalLanguage())))
                 .andExpect(jsonPath("$.priority", is(task.getPriority().toString())))
                 .andExpect(jsonPath("$.description", is(task.getDescription())));
     }
@@ -150,7 +150,7 @@ public class TaskControllerTest {
         task.setDescription("Test Description");
         task.setTimeEstimate(1.0f);
         task.setDueDate(LocalDateTime.of(2026,1,1,1,1,0));
-        task.setAcceptanceCriteria("Good Code");
+        task.setOriginalLanguage("EN");
         task.setPriority(Priority.MEDIUM);
 
         given(taskService.getTaskById(1L)).willReturn(Optional.of(task));
@@ -171,7 +171,7 @@ public class TaskControllerTest {
         task.setDescription("Test Description");
         task.setTimeEstimate(1.0f);
         task.setDueDate(LocalDateTime.of(2026,1,1,1,1,0));
-        task.setAcceptanceCriteria("Good Code");
+        task.setOriginalLanguage("EN");
         task.setPriority(Priority.MEDIUM);
 
         given(taskService.getTaskById(1L)).willReturn(Optional.of(task));
@@ -192,7 +192,7 @@ public class TaskControllerTest {
         task.setDescription("Test Description");
         task.setTimeEstimate(1.0f);
         task.setDueDate(LocalDateTime.of(2026,1,1,1,1,0));
-        task.setAcceptanceCriteria("Good Code");
+        task.setOriginalLanguage("EN");
         task.setPriority(Priority.MEDIUM);
 
         given(taskService.getTaskById(1L)).willReturn(Optional.of(task));
@@ -213,7 +213,7 @@ public class TaskControllerTest {
         task.setDescription("Test Description");
         task.setTimeEstimate(1.0f);
         task.setDueDate(LocalDateTime.of(2026,1,1,1,1,0));
-        task.setAcceptanceCriteria("Good Code");
+        task.setOriginalLanguage("EN");
         task.setPriority(Priority.MEDIUM);
 
         TaskPutDTO taskPutDTO = new TaskPutDTO();
@@ -221,7 +221,7 @@ public class TaskControllerTest {
         taskPutDTO.setDescription("Test Description Updated");
         taskPutDTO.setTimeEstimate(1.0f);
         taskPutDTO.setDueDate(LocalDateTime.of(2026,1,1,1,1,0));
-        taskPutDTO.setAcceptanceCriteria("Good Code");
+        taskPutDTO.setOriginalLanguage("EN");
         taskPutDTO.setPriority(Priority.MEDIUM);
 
         Task updatedTask = new Task();
@@ -230,7 +230,7 @@ public class TaskControllerTest {
         updatedTask.setDescription("Test Description Updated");
         updatedTask.setTimeEstimate(1.0f);
         updatedTask.setDueDate(LocalDateTime.of(2026,1,1,1,1,0));
-        updatedTask.setAcceptanceCriteria("Good Code");
+        updatedTask.setOriginalLanguage("EN");
         updatedTask.setPriority(Priority.MEDIUM);
 
         given(taskService.getTaskById(1L)).willReturn(Optional.of(task));

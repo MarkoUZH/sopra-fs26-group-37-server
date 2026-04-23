@@ -4,6 +4,7 @@ import ch.uzh.ifi.hase.soprafs26.entity.Sprint;
 import ch.uzh.ifi.hase.soprafs26.entity.Tag;
 import ch.uzh.ifi.hase.soprafs26.entity.Task;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.*;
+import ch.uzh.ifi.hase.soprafs26.rest.mapper.SprintDTOMapper;
 import ch.uzh.ifi.hase.soprafs26.rest.mapper.TagDTOMapper;
 import ch.uzh.ifi.hase.soprafs26.rest.mapper.TaskDTOMapper;
 import ch.uzh.ifi.hase.soprafs26.service.UserService;
@@ -41,9 +42,6 @@ public class ProjectController {
 		List<Project> projects = projectService.getProjects();
 		List<ProjectGetDTO> projectGetDTOS = new ArrayList<>();
 
-        
-
-
 		for (Project project : projects) {
             projectGetDTOS.add(ProjectDTOMapper.INSTANCE.convertEntityToProjectGetDTO(project));
 		}
@@ -54,9 +52,6 @@ public class ProjectController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public List<ProjectGetDTO> getProjectsByUserId(@PathVariable Long userId, @RequestHeader(value = "Authorization", required = false) String token) {
-        
-        
-
         
         List<Project> projects = projectService.getProjectsByUserId(userId);
         List<ProjectGetDTO> projectGetDTOS = new ArrayList<>();
@@ -161,8 +156,7 @@ public class ProjectController {
         if (project.isPresent()) {
             List<Sprint> sprints = project.get().getSprints();
             for (Sprint sprint : sprints) {
-                // TODO add mapping
-                //.add(TaskDTOMapper.INSTANCE.convertEntityToTaskGetDTO(task));
+                sprintDTOS.add(SprintDTOMapper.INSTANCE.convertEntityToSprintDTO(sprint));
             }
             return sprintDTOS;
         }
