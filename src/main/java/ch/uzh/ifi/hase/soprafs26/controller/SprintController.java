@@ -7,14 +7,17 @@ import ch.uzh.ifi.hase.soprafs26.service.SprintService;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.SprintPostDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.mapper.SprintDTOMapper;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import ch.uzh.ifi.hase.soprafs26.rest.dto.SprintPutDTO;
 
 import java.util.List;
 
@@ -80,6 +83,32 @@ public class SprintController {
         return SprintDTOMapper.INSTANCE.convertEntityToSprintDTO(sprint);
     }
 
+    @PutMapping("/sprints/{sprintId}")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public SprintGetDTO updateSprint(@PathVariable Long sprintId,
+                                    @RequestBody SprintPutDTO sprintPutDTO,
+                                    @RequestHeader(value = "Authorization", required = false) String token) {
+        // 1. Verify token
+
+        // 2. Convert DTO to Entity
+        Sprint sprintInput = SprintDTOMapper.INSTANCE.convertSprintPutDTOtoEntity(sprintPutDTO);
+        
+        // 3. Update sprint
+        Sprint updatedSprint = sprintService.updateSprint(sprintId, sprintInput);
+
+        // 4. Return the result mapped to a GetDTO
+        return SprintDTOMapper.INSTANCE.convertEntityToSprintDTO(updatedSprint);
+    }
+
+    @DeleteMapping("/sprints/{sprintId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteSprint(@PathVariable Long sprintId,
+                             @RequestHeader(value = "Authorization", required = false) String token) {
+       
+        // 2. Call service to delete sprint
+        sprintService.deleteSprint(sprintId);
+    }
 
 
 }
