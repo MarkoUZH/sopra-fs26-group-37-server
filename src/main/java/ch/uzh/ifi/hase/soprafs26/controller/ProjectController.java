@@ -77,7 +77,8 @@ public class ProjectController {
         Project projectInput = ProjectDTOMapper.INSTANCE.convertProjectPostDTOtoEntity(projectPostDTO);
         List<Long> memberIds = projectPostDTO.getMemberIds();
             Long ownerId = projectPostDTO.getOwnerId();
-        Project createdProject = projectService.createProject(projectInput, memberIds, ownerId);
+            String originalLanguage = projectPostDTO.getOriginalLanguage();
+        Project createdProject = projectService.createProject(projectInput, memberIds, ownerId, originalLanguage);
 
         return ProjectDTOMapper.INSTANCE.convertEntityToProjectGetDTO(createdProject);
     }

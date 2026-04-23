@@ -13,6 +13,7 @@ public interface ProjectDTOMapper {
 
     @Mapping(source = "name", target = "name")
     @Mapping(source = "description", target = "description")
+    @Mapping(source = "originalLanguage", target = "originalLanguage")
     Project convertProjectPostDTOtoEntity(ProjectPostDTO projectPostDTO);
 
     @Mapping(source = "id", target = "id")

@@ -5,6 +5,15 @@ public class ProjectPostDTO {
     private String description;
     private Long ownerId;
     private List<Long> memberIds;
+    private String originalLanguage;
+
+     public String getOriginalLanguage() {
+        return originalLanguage;
+    }
+
+    public void setOriginalLanguage(String originalLanguage) {
+        this.originalLanguage = originalLanguage;
+    }
 
     public String getName() {
         return name;

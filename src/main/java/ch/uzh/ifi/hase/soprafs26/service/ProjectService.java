@@ -39,7 +39,7 @@ public class ProjectService {
     	return projectRepository.findAll();
     }
 
-    public Project createProject(Project project, List<Long> memberIds, Long ownerId)
+    public Project createProject(Project project, List<Long> memberIds, Long ownerId, String originalLanguage)
     {if (ownerId != null) {
         User owner = userService.getUserById(ownerId);
         project.setOwner(owner);
@@ -54,6 +54,7 @@ public class ProjectService {
         }
         project.setMembers(members);
     }
+    project.setOriginalLanguage(originalLanguage);
     	return projectRepository.save(project);
     }
 
