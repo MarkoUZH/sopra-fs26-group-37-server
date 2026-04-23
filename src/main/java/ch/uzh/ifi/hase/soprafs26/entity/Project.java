@@ -12,6 +12,7 @@ public class Project {
     private Long id;
     private String name;
     private String description;
+    private String originalLanguage;
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Task> tasks;
     @ManyToOne
@@ -31,11 +32,12 @@ public class Project {
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Tag> tags;
 
+
     public Project() {
 
     }
 
-    public Project(String name, String description, List<Task> tasks, User owner, List<User> members, List<Sprint> sprints, List<Tag> tags) {
+    public Project(String name, String description, List<Task> tasks, User owner, List<User> members, List<Sprint> sprints, List<Tag> tags, String originalLanguage) {
         this.name = name;
         this.description = description;
         this.tasks = tasks;
@@ -43,6 +45,7 @@ public class Project {
         this.members = members;
         this.sprints = sprints;
         this.tags = tags;
+        this.originalLanguage = originalLanguage;
     }
 
     public Long getId() {
@@ -107,5 +110,13 @@ public class Project {
 
     public void setTags(List<Tag> tags) {
         this.tags = tags;
+    }
+
+    public String getOriginalLanguage() {
+        return originalLanguage;
+    }
+
+    public void setOriginalLanguage(String originalLanguage) {
+        this.originalLanguage = originalLanguage;
     }
 }

@@ -11,6 +11,7 @@ public class ProjectGetDTO {
     private List<SprintGetDTO> sprints;
     private List<TagDTO> tags;
     private List<TaskDTO> tasks;
+    private String originalLanguage;
 
     public Long getId() {
         return id;
@@ -75,4 +76,13 @@ public class ProjectGetDTO {
     public void setTasks(List<TaskDTO> tasks) {
         this.tasks = tasks;
     }
+
+    public String getOriginalLanguage() {
+        return originalLanguage;
+    }
+
+    public void setOriginalLanguage(String originalLanguage) {
+        this.originalLanguage = originalLanguage;
+    }
+
 }

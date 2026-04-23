@@ -13,6 +13,7 @@ public interface ProjectDTOMapper {
 
     @Mapping(source = "name", target = "name")
     @Mapping(source = "description", target = "description")
+    @Mapping(source = "originalLanguage", target = "originalLanguage")
     Project convertProjectPostDTOtoEntity(ProjectPostDTO projectPostDTO);
 
     @Mapping(source = "id", target = "id")
@@ -23,6 +24,7 @@ public interface ProjectDTOMapper {
     @Mapping(source = "sprints", target = "sprints")
     @Mapping(source = "tags", target = "tags")
     @Mapping(source = "tasks", target = "tasks")
+    @Mapping(source = "originalLanguage", target = "originalLanguage")
     ProjectGetDTO convertEntityToProjectGetDTO(Project project);
 
     @Mapping(source = "name", target = "name")
