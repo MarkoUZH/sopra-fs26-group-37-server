@@ -13,7 +13,6 @@ public class TaskPostDTO {
     private Priority priority;
     private LocalDateTime dueDate;
     private float timeEstimate;
-    private Long sprintId;
     private Long projectId;
     private String originalLanguage;
 
@@ -73,13 +72,6 @@ public class TaskPostDTO {
         this.timeEstimate = timeEstimate;
     }
 
-    public Long getSprintId() {
-        return sprintId;
-    }
-
-    public void setSprintId(Long sprintId) {
-        this.sprintId = sprintId;
-    }
 
     public Long getProjectId() {
         return projectId;

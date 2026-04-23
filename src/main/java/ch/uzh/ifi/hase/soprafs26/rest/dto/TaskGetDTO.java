@@ -15,7 +15,6 @@ public class TaskGetDTO {
     private Priority priority;
     private LocalDateTime dueDate;
     private float timeEstimate;
-    private SprintGetDTO sprint;
     private ProjectDTO project;
     private TaskStatus status;
     private String originalLanguage;
@@ -82,14 +81,6 @@ public class TaskGetDTO {
 
     public void setTimeEstimate(float timeEstimate) {
         this.timeEstimate = timeEstimate;
-    }
-
-    public SprintGetDTO getSprint() {
-        return sprint;
-    }
-
-    public void setSprint(SprintGetDTO sprint) {
-        this.sprint = sprint;
     }
 
     public ProjectDTO getProject() {

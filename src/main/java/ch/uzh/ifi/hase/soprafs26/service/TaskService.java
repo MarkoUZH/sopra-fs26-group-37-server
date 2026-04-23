@@ -8,26 +8,31 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
+import ch.uzh.ifi.hase.soprafs26.entity.User;
+import ch.uzh.ifi.hase.soprafs26.repository.UserRepository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
 public class TaskService {
 
 	private final Logger log = LoggerFactory.getLogger(TaskService.class);
-
+    private final UserRepository userRepository;
 	private final TaskRepository taskRepository;
-
     private final UserService userService;
 
-    public TaskService(TaskRepository taskRepository, UserService userService) {
-        this.taskRepository = taskRepository;
+	public TaskService(@Qualifier("taskRepository") TaskRepository taskRepository, @Qualifier("userRepository") UserRepository userRepository, @Qualifier("userService") UserService userService   ) {
+		this.taskRepository = taskRepository;
+        this.userRepository = userRepository;
         this.userService = userService;
-    }
+	}
 
     public List<Task> getTasks()
     {
@@ -51,28 +56,19 @@ public class TaskService {
         taskRepository.deleteById(id);
     }
 
-    public Task updateTask(Long id, Task newTask)
-    {
-        Optional<Task> oldTask = taskRepository.findById(id);
-        Task updatedTask = oldTask.orElse(newTask);
-        if(oldTask.isPresent())
-        {
-            updatedTask.setName(oldTask.get().getName());
-            updatedTask.setDescription(oldTask.get().getDescription());
-            updatedTask.setAcceptanceCriteria(oldTask.get().getAcceptanceCriteria());
-            updatedTask.setAssignedUsers(oldTask.get().getAssignedUsers());
-            updatedTask.setPriority(oldTask.get().getPriority());
-            updatedTask.setTags(oldTask.get().getTags());
-            updatedTask.setDueDate(oldTask.get().getDueDate());
-            updatedTask.setSprint(oldTask.get().getSprint());
-            updatedTask.setTimeEstimate(oldTask.get().getTimeEstimate());
-        }
-        else
-        {
-            log.error("Task with id {} could not be found", id);
-        }
-        taskRepository.save(updatedTask);
-        return updatedTask;
-    }
+   public Task updateTask(Long id, Task newTask) {
+    Task existingTask = taskRepository.findById(id)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Task not found"));
+
+    existingTask.setStatus(newTask.getStatus()); 
+    existingTask.setName(newTask.getName());
+    existingTask.setDescription(newTask.getDescription());
+    existingTask.setPriority(newTask.getPriority());
+    existingTask.setDueDate(newTask.getDueDate());
+    existingTask.setTimeEstimate(newTask.getTimeEstimate());
+    existingTask.setAssignedUsers(newTask.getAssignedUsers());
+
+    return taskRepository.save(existingTask);
+}
 
 }
