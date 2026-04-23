@@ -11,7 +11,6 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 @Service
 public class TranslationService {
 
@@ -20,125 +19,47 @@ public class TranslationService {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
-    // Updated to use the new Inference Providers router instead of the deprecated api-inference subdomain
-    private static final String API_URL =
-        "https://router.huggingface.co/hf-inference/models/facebook/mbart-large-50-many-to-many-mmt";
-
-    // Language mapper for mBART compatibility (All 52 Supported Languages)
-    private String getMBartLanguageCode(String standardCode) {
-        return switch (standardCode.toLowerCase()) {
-            case "ar" -> "ar_AR"; // Arabic
-            case "cs" -> "cs_CZ"; // Czech
-            case "de" -> "de_DE"; // German
-            case "en" -> "en_XX"; // English
-            case "es" -> "es_XX"; // Spanish
-            case "et" -> "et_EE"; // Estonian
-            case "fi" -> "fi_FI"; // Finnish
-            case "fr" -> "fr_XX"; // French
-            case "gu" -> "gu_IN"; // Gujarati
-            case "hi" -> "hi_IN"; // Hindi
-            case "it" -> "it_IT"; // Italian
-            case "ja" -> "ja_XX"; // Japanese
-            case "kk" -> "kk_KZ"; // Kazakh
-            case "ko" -> "ko_KR"; // Korean
-            case "lt" -> "lt_LT"; // Lithuanian
-            case "lv" -> "lv_LV"; // Latvian
-            case "my" -> "my_MM"; // Burmese
-            case "ne" -> "ne_NP"; // Nepali
-            case "nl" -> "nl_XX"; // Dutch
-            case "ro" -> "ro_RO"; // Romanian
-            case "ru" -> "ru_RU"; // Russian
-            case "si" -> "si_LK"; // Sinhala
-            case "tr" -> "tr_TR"; // Turkish
-            case "vi" -> "vi_VN"; // Vietnamese
-            case "zh" -> "zh_CN"; // Chinese
-            case "af" -> "af_ZA"; // Afrikaans
-            case "az" -> "az_AZ"; // Azerbaijani
-            case "bn" -> "bn_IN"; // Bengali
-            case "fa" -> "fa_IR"; // Persian
-            case "he" -> "he_IL"; // Hebrew
-            case "hr" -> "hr_HR"; // Croatian
-            case "id" -> "id_ID"; // Indonesian
-            case "ka" -> "ka_GE"; // Georgian
-            case "km" -> "km_KH"; // Khmer
-            case "mk" -> "mk_MK"; // Macedonian
-            case "ml" -> "ml_IN"; // Malayalam
-            case "mn" -> "mn_MN"; // Mongolian
-            case "mr" -> "mr_IN"; // Marathi
-            case "pl" -> "pl_PL"; // Polish
-            case "ps" -> "ps_AF"; // Pashto
-            case "pt" -> "pt_XX"; // Portuguese
-            case "sv" -> "sv_SE"; // Swedish
-            case "sw" -> "sw_KE"; // Swahili
-            case "ta" -> "ta_IN"; // Tamil
-            case "te" -> "te_IN"; // Telugu
-            case "th" -> "th_TH"; // Thai
-            case "tl" -> "tl_XX"; // Tagalog
-            case "uk" -> "uk_UA"; // Ukrainian
-            case "ur" -> "ur_PK"; // Urdu
-            case "xh" -> "xh_ZA"; // Xhosa
-            case "gl" -> "gl_ES"; // Galician
-            case "sl" -> "sl_SI"; // Slovene
-            default -> throw new IllegalArgumentException("Unsupported language code: " + standardCode);
-        };
-    }
-
-    // Maintained for backward compatibility: defaults source language to English
-    public String translate(String text, String languageIso2) {
-        return translate(text, "en", languageIso2);
-    }
-
-    // New overloaded method to support changing the source language
-    public String translate(String text, String sourceLanguageIso2, String targetLanguageIso2) {
+    // Use the standard OpenAI-compatible router URL
+private static final String API_URL = "https://router.huggingface.co/v1/chat/completions";
+    public String translate(String text, String sourceLang, String targetLang) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setAccept(List.of(MediaType.APPLICATION_JSON));
         headers.set("Authorization", "Bearer " + hfToken);
-        headers.set("X-HF-Bill-To", "UZHedu");
         
-        // CRITICAL FIX: Bypass the Hugging Face cache. 
-        // If an earlier request without correct parameters just echoed the text, HF will cache that response.
-        headers.set("X-Use-Cache", "false");
+        // CRITICAL: Tell HF to bill the University Organization
+        // Replace "uzh-org-name" with your actual Org slug on Hugging Face
+        headers.set("X-HF-Bill-To", "UZHedu"); 
 
         Map<String, Object> body = new HashMap<>();
+        // Use :fastest to let the router pick the best provider (Groq, Together, etc.)
+        body.put("model", "Qwen/Qwen2.5-7B-Instruct:fastest");
         
-        // mBART takes pure text as input without natural language prefixes
-        body.put("inputs", text);
-
-        // Parameters map to explicitly set source and target languages
-        Map<String, String> parameters = new HashMap<>();
-        parameters.put("src_lang", getMBartLanguageCode(sourceLanguageIso2)); 
-        parameters.put("tgt_lang", getMBartLanguageCode(targetLanguageIso2));
+        body.put("messages", List.of(
+            Map.of("role", "system", "content", 
+                String.format("You are a professional translator. Translate from %s to %s. Output ONLY the translated text.", sourceLang, targetLang)),
+            Map.of("role", "user", "content", text)
+        ));
         
-        body.put("parameters", parameters);
+        body.put("temperature", 0.1); // Low temperature = more accurate translation
+        body.put("max_tokens", 1024);
 
         HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
 
         try {
-            // Receive as String to avoid Spring failing on HF's "application/json, application/+json" Content-Type header
-            ResponseEntity<String> response = restTemplate.postForEntity(API_URL, entity, String.class);
+            // Using Map.class is fine, but we need to navigate the tree
+            ResponseEntity<Map> response = restTemplate.postForEntity(API_URL, entity, Map.class);
+            
+            if (response.getBody() == null) return "Error: Null response";
 
-            List<Map<String, String>> result = new ObjectMapper()
-                .readValue(response.getBody(), new TypeReference<>() {});
+            List<Map<String, Object>> choices = (List<Map<String, Object>>) response.getBody().get("choices");
+            if (choices == null || choices.isEmpty()) return "Error: No choices in response";
 
-            if (result != null && !result.isEmpty()) {
-                Map<String, String> resultMap = result.get(0);
-                
-                // The translation pipeline outputs "translation_text"
-                if (resultMap.containsKey("translation_text")) {
-                    return resultMap.get("translation_text");
-                } 
-                // Fallback: If HF treats the endpoint dynamically as generic "text2text-generation", 
-                // it outputs "generated_text" instead.
-                else if (resultMap.containsKey("generated_text")) {
-                    return resultMap.get("generated_text");
-                }
-            }
-            return "Translation result was empty";
+            Map<String, Object> message = (Map<String, Object>) choices.get(0).get("message");
+            return (String) message.get("content");
 
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "AI Model Error: " + e.getMessage());
+            // This will catch 401 (Token), 400 (Org Billing), or 404 (Model)
+            throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "LLM Translation Error: " + e.getMessage());
         }
     }
-
 }
