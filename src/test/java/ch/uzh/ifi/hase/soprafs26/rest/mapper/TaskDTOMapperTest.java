@@ -1,9 +1,14 @@
 package ch.uzh.ifi.hase.soprafs26.rest.mapper;
 
+import ch.uzh.ifi.hase.soprafs26.constant.Priority;
+import ch.uzh.ifi.hase.soprafs26.constant.TaskStatus;
 import ch.uzh.ifi.hase.soprafs26.entity.Project;
+import ch.uzh.ifi.hase.soprafs26.entity.Tag;
 import ch.uzh.ifi.hase.soprafs26.entity.Task;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.*;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -28,21 +33,29 @@ public class TaskDTOMapperTest {
 		assertEquals(taskPostDTO.getDescription(), task.getDescription());
 	}
 
-	@Test
-	public void testGetTask_fromTask_toTaskGetDTO_success() {
-		// create Project
-		Task task = new Task();
-        task.setName("test 1");
-        task.setDescription("test description");
+    @Test
+    public void testGetTask_fromEntity_success() {
+        Project project = new Project();
+        project.setId(9L);
 
-		// MAP -> Create UserGetDTO
-		TaskGetDTO taskGetDTO = TaskDTOMapper.INSTANCE.convertEntityToTaskGetDTO(task);
+        Tag tag = new Tag();
+        tag.setId(50L);
 
-		// check content
-		assertEquals(task.getId(), taskGetDTO.getId());
-		assertEquals(task.getName(), taskGetDTO.getName());
-		assertEquals(task.getDescription(), taskGetDTO.getDescription());
-	}
+        Task task = new Task();
+        task.setId(1L);
+        task.setName("Refactor");
+        task.setStatus(TaskStatus.IN_PROGRESS);
+        task.setPriority(Priority.HIGH);
+        task.setProject(project);
+        task.setTags(List.of(tag));
+
+        TaskGetDTO dto = TaskDTOMapper.INSTANCE.convertEntityToTaskGetDTO(task);
+
+        assertEquals(TaskStatus.IN_PROGRESS, dto.getStatus());
+        assertEquals(Priority.HIGH, dto.getPriority());
+        assertEquals(9L, dto.getProject().getId());
+        assertEquals(50L, dto.getTags().get(0).getId());
+    }
 
     @Test
     public void testUpdateTask_fromTask_toTaskGetDTO_success() {

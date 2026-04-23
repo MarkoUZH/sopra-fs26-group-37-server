@@ -1,50 +1,56 @@
 package ch.uzh.ifi.hase.soprafs26.rest.mapper;
 
-import ch.uzh.ifi.hase.soprafs26.constant.UserStatus;
 import ch.uzh.ifi.hase.soprafs26.entity.Project;
 import ch.uzh.ifi.hase.soprafs26.entity.User;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.ProjectGetDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.ProjectPostDTO;
-import ch.uzh.ifi.hase.soprafs26.rest.dto.UserGetDTO;
-import ch.uzh.ifi.hase.soprafs26.rest.dto.UserPostDTO;
+import ch.uzh.ifi.hase.soprafs26.rest.dto.ProjectPutDTO;
 import org.junit.jupiter.api.Test;
+import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-/**
- * DTOMapperTest
- * Tests if the mapping between the internal and the external/API representation
- * works.
- */
 public class ProjectDTOMapperTest {
-	@Test
-	public void testCreateProject_fromProjectPostDTO_toProject_success() {
-		// create ProjectPostDTO
-		ProjectPostDTO projectPostDTO = new ProjectPostDTO();
-		projectPostDTO.setName("name");
-		projectPostDTO.setDescription("description");
 
-		// MAP -> Create user
-		Project project = ProjectDTOMapper.INSTANCE.convertProjectPostDTOtoEntity(projectPostDTO);
+    @Test
+    public void testCreateProject_fromProjectPostDTO_toProject_success() {
+        ProjectPostDTO projectPostDTO = new ProjectPostDTO();
+        projectPostDTO.setName("New Project");
+        projectPostDTO.setDescription("Description");
 
-		// check content
-		assertEquals(projectPostDTO.getName(), project.getName());
-		assertEquals(projectPostDTO.getDescription(), project.getDescription());
-	}
+        Project project = ProjectDTOMapper.INSTANCE.convertProjectPostDTOtoEntity(projectPostDTO);
 
-	@Test
-	public void testGetProject_fromProject_toProjectGetDTO_success() {
-		// create Project
-		Project project = new Project();
-		project.setName("test 1");
-		project.setDescription("test description");
+        assertEquals(projectPostDTO.getName(), project.getName());
+        assertEquals(projectPostDTO.getDescription(), project.getDescription());
+    }
 
-		// MAP -> Create UserGetDTO
-		ProjectGetDTO projectGetDTO = ProjectDTOMapper.INSTANCE.convertEntityToProjectGetDTO(project);
+    @Test
+    public void testGetProject_fromProject_toProjectGetDTO_success() {
+        User owner = new User();
+        owner.setId(10L);
 
-		// check content
-		assertEquals(project.getId(), projectGetDTO.getId());
-		assertEquals(project.getName(), projectGetDTO.getName());
-		assertEquals(project.getDescription(), projectGetDTO.getDescription());
-	}
+        Project project = new Project();
+        project.setId(1L);
+        project.setName("Existing Project");
+        project.setOwner(owner);
+        project.setMembers(Collections.emptyList());
+
+        ProjectGetDTO dto = ProjectDTOMapper.INSTANCE.convertEntityToProjectGetDTO(project);
+
+        assertEquals(project.getId(), dto.getId());
+        assertEquals(project.getName(), dto.getName());
+        assertEquals(10L, dto.getOwner().getId());
+    }
+
+    @Test
+    public void testUpdateProject_fromProjectPutDTO_toProject_success() {
+        ProjectPutDTO projectPutDTO = new ProjectPutDTO();
+        projectPutDTO.setName("New Project");
+        projectPutDTO.setDescription("Description");
+
+        Project project = ProjectDTOMapper.INSTANCE.convertProjectPutDTOtoEntity(projectPutDTO);
+
+        assertEquals(projectPutDTO.getName(), project.getName());
+        assertEquals(projectPutDTO.getDescription(), project.getDescription());
+    }
 }

@@ -1,47 +1,71 @@
 package ch.uzh.ifi.hase.soprafs26.rest.mapper;
 
-import org.junit.jupiter.api.Test;
-
 import ch.uzh.ifi.hase.soprafs26.constant.UserStatus;
 import ch.uzh.ifi.hase.soprafs26.entity.User;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.UserGetDTO;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.UserPostDTO;
+import ch.uzh.ifi.hase.soprafs26.rest.dto.UserPutDTO;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-/**
- * DTOMapperTest
- * Tests if the mapping between the internal and the external/API representation
- * works.
- */
 public class DTOMapperTest {
-	@Test
-	public void testCreateUser_fromUserPostDTO_toUser_success() {
-		// create UserPostDTO
-		UserPostDTO userPostDTO = new UserPostDTO();
-		userPostDTO.setUsername("username");
 
-		// MAP -> Create user
-		User user = DTOMapper.INSTANCE.convertUserPostDTOtoEntity(userPostDTO);
+    @Test
+    public void testCreateUser_fromUserPostDTO_toUser_success() {
+        UserPostDTO userPostDTO = new UserPostDTO();
+        userPostDTO.setUsername("username");
+        userPostDTO.setEmail("test@email.com");
+        userPostDTO.setPassword("password");
+        userPostDTO.setName("name");
+        userPostDTO.setManager(true);
 
-		// check content
-		assertEquals(userPostDTO.getUsername(), user.getUsername());
-	}
+        User user = DTOMapper.INSTANCE.convertUserPostDTOtoEntity(userPostDTO);
 
-	@Test
-	public void testGetUser_fromUser_toUserGetDTO_success() {
-		// create User
-		User user = new User();
-		user.setUsername("firstname@lastname");
-		user.setStatus(UserStatus.OFFLINE);
-		user.setToken("1");
+        assertEquals(userPostDTO.getUsername(), user.getUsername());
+        assertEquals(userPostDTO.getEmail(), user.getEmail());
+        assertEquals(userPostDTO.getPassword(), user.getPassword());
+        assertEquals(userPostDTO.getName(), user.getName());
+        assertEquals(userPostDTO.getManager(), user.getManager());
+    }
 
-		// MAP -> Create UserGetDTO
-		UserGetDTO userGetDTO = DTOMapper.INSTANCE.convertEntityToUserGetDTO(user);
+    @Test
+    public void testGetUser_fromUser_toUserGetDTO_success() {
+        User user = new User();
+        user.setId(1L);
+        user.setUsername("username");
+        user.setStatus(UserStatus.OFFLINE);
+        user.setToken("1");
+        user.setManager(true);
+        user.setPassword("password");
+        user.setEmail("email@uzh.ch");
+        user.setName("name");
 
-		// check content
-		assertEquals(user.getId(), userGetDTO.getId());
-		assertEquals(user.getUsername(), userGetDTO.getUsername());
-		assertEquals(user.getStatus(), userGetDTO.getStatus());
-	}
+        UserGetDTO userGetDTO = DTOMapper.INSTANCE.convertEntityToUserGetDTO(user);
+
+        assertEquals(user.getId(), userGetDTO.getId());
+        assertEquals(user.getUsername(), userGetDTO.getUsername());
+        assertEquals(user.getStatus(), userGetDTO.getStatus());
+        assertEquals(user.getName(), userGetDTO.getName());
+        assertEquals(user.getLanguage(), userGetDTO.getLanguage());
+        assertEquals(user.getToken(), userGetDTO.getToken());
+        assertEquals(user.getEmail(), userGetDTO.getEmail());
+        assertEquals(user.getManager(), userGetDTO.getManager());
+    }
+
+    @Test
+    public void testUpdateUser_fromUserPutDTO_toEntity_success() {
+        UserPutDTO userPutDTO = new UserPutDTO();
+        userPutDTO.setUsername("newUsername");
+        userPutDTO.setPassword("newPass");
+        userPutDTO.setName("name");
+        userPutDTO.setLanguage("German");
+
+        User user = DTOMapper.INSTANCE.convertUserPutDTOtoEntity(userPutDTO);
+
+        assertEquals(userPutDTO.getUsername(), user.getUsername());
+        assertEquals(userPutDTO.getPassword(), user.getPassword());
+        assertEquals(userPutDTO.getName(), user.getName());
+        assertEquals(userPutDTO.getLanguage(), user.getLanguage());
+    }
 }
