@@ -77,7 +77,7 @@ public class ProjectServiceTest {
 
     @Test
     public void createProject_noOwnerNoMembers_success() {
-        Project created = projectService.createProject(testProject, null, null);
+        Project created = projectService.createProject(testProject, null, null, null);
 
         verify(projectRepository, times(1)).save(Mockito.any());
         assertEquals(testProject.getId(), created.getId());
@@ -89,7 +89,7 @@ public class ProjectServiceTest {
     public void createProject_withOwner_setsOwnerAndSaves() {
         when(userService.getUserById(10L)).thenReturn(testUser);
 
-        Project created = projectService.createProject(testProject, null, 10L);
+        Project created = projectService.createProject(testProject, null, 10L, null);
 
         verify(userService, times(1)).getUserById(10L);
         verify(projectRepository, times(1)).save(Mockito.any());
@@ -101,7 +101,7 @@ public class ProjectServiceTest {
     public void createProject_withMembers_setsMembersAndSaves() {
         when(userService.getUserById(20L)).thenReturn(testMember);
 
-        Project created = projectService.createProject(testProject, Arrays.asList(20L), null);
+        Project created = projectService.createProject(testProject, Arrays.asList(20L), null, null);
 
         verify(userService, times(1)).getUserById(20L);
         verify(projectRepository, times(1)).save(Mockito.any());
@@ -113,7 +113,7 @@ public class ProjectServiceTest {
         when(userService.getUserById(10L)).thenReturn(testUser);
         when(userService.getUserById(20L)).thenReturn(testMember);
 
-        Project created = projectService.createProject(testProject, Arrays.asList(20L), 10L);
+        Project created = projectService.createProject(testProject, Arrays.asList(20L), 10L, "German");
 
         verify(userService, times(1)).getUserById(10L);
         verify(userService, times(1)).getUserById(20L);

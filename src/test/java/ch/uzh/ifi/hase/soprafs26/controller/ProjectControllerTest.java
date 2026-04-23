@@ -84,7 +84,7 @@ public void createProject_validInput_projectCreated() throws Exception {
     projectPostDTO.setMemberIds(Collections.singletonList(2L));
 
     // Update the mock to match the 3-argument method signature in your Service
-    given(projectService.createProject(Mockito.any(), Mockito.any(), Mockito.any()))
+    given(projectService.createProject(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
             .willReturn(project);
 
     // when

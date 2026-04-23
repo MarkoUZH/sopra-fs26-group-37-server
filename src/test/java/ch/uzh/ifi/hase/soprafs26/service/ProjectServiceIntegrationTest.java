@@ -79,7 +79,7 @@ public class ProjectServiceIntegrationTest {
         testProject.setName("testName");
         testProject.setDescription("testDescription");
 
-        Project createdProject = projectService.createProject(testProject, null, null);
+        Project createdProject = projectService.createProject(testProject, null, null, null);
 
         assertEquals(testProject.getId(), createdProject.getId());
         assertEquals("testName", createdProject.getName());
@@ -92,7 +92,7 @@ public class ProjectServiceIntegrationTest {
         testProject.setName("projectWithOwner");
         testProject.setDescription("desc");
 
-        Project created = projectService.createProject(testProject, null, persistedOwner.getId());
+        Project created = projectService.createProject(testProject, null, persistedOwner.getId(), null);
 
         assertNotNull(created.getOwner());
         assertEquals(persistedOwner.getId(), created.getOwner().getId());
@@ -105,7 +105,7 @@ public class ProjectServiceIntegrationTest {
         testProject.setDescription("desc");
 
         Project created = projectService.createProject(
-                testProject, Arrays.asList(persistedMember.getId()), null);
+                testProject, Arrays.asList(persistedMember.getId()), null, null);
 
         assertNotNull(created.getMembers());
         assertEquals(1, created.getMembers().size());
@@ -119,7 +119,7 @@ public class ProjectServiceIntegrationTest {
         testProject.setDescription("desc");
 
         Project created = projectService.createProject(
-                testProject, Arrays.asList(persistedMember.getId()), persistedOwner.getId());
+                testProject, Arrays.asList(persistedMember.getId()), persistedOwner.getId(), "DE");
 
         assertEquals(persistedOwner.getId(), created.getOwner().getId());
         assertEquals(1, created.getMembers().size());
@@ -131,12 +131,12 @@ public class ProjectServiceIntegrationTest {
         Project p1 = new Project();
         p1.setName("project1");
         p1.setDescription("desc1");
-        projectService.createProject(p1, null, null);
+        projectService.createProject(p1, null, null,  null);
 
         Project p2 = new Project();
         p2.setName("project2");
         p2.setDescription("desc2");
-        projectService.createProject(p2, null, null);
+        projectService.createProject(p2, null, null,   null);
 
         List<Project> projects = projectService.getProjects();
 
@@ -154,7 +154,7 @@ public class ProjectServiceIntegrationTest {
         Project testProject = new Project();
         testProject.setName("fetchMe");
         testProject.setDescription("desc");
-        Project saved = projectService.createProject(testProject, null, null);
+        Project saved = projectService.createProject(testProject, null, null, null);
 
         Optional<Project> found = projectService.getProjectById(saved.getId());
 
@@ -173,7 +173,7 @@ public class ProjectServiceIntegrationTest {
         Project testProject = new Project();
         testProject.setName("toDelete");
         testProject.setDescription("desc");
-        Project saved = projectService.createProject(testProject, null, null);
+        Project saved = projectService.createProject(testProject, null, null, null);
         Long id = saved.getId();
 
         projectService.deleteProjectById(id);
@@ -186,7 +186,7 @@ public class ProjectServiceIntegrationTest {
         Project testProject = new Project();
         testProject.setName("original");
         testProject.setDescription("originalDesc");
-        Project saved = projectService.createProject(testProject, null, null);
+        Project saved = projectService.createProject(testProject, null, null, null);
 
         Project updateInput = new Project();
         updateInput.setName("updated");
@@ -203,7 +203,7 @@ public class ProjectServiceIntegrationTest {
         Project testProject = new Project();
         testProject.setName("p");
         testProject.setDescription("d");
-        Project saved = projectService.createProject(testProject, null, null);
+        Project saved = projectService.createProject(testProject, null, null, null);
 
         Project updateInput = new Project();
         updateInput.setName("p");
@@ -234,7 +234,7 @@ public class ProjectServiceIntegrationTest {
         Project testProject = new Project();
         testProject.setName("owned");
         testProject.setDescription("desc");
-        projectService.createProject(testProject, null, persistedOwner.getId());
+        projectService.createProject(testProject, null, persistedOwner.getId(), null);
 
         List<Project> results = projectService.getProjectsByUserId(persistedOwner.getId());
 
@@ -248,7 +248,7 @@ public class ProjectServiceIntegrationTest {
         testProject.setName("memberOf");
         testProject.setDescription("desc");
         projectService.createProject(
-                testProject, Arrays.asList(persistedMember.getId()), null);
+                testProject, Arrays.asList(persistedMember.getId()), null, null);
 
         List<Project> results = projectService.getProjectsByUserId(persistedMember.getId());
 
@@ -263,7 +263,7 @@ public class ProjectServiceIntegrationTest {
         testProject.setName("dual");
         testProject.setDescription("desc");
         projectService.createProject(
-                testProject, Arrays.asList(persistedOwner.getId()), persistedOwner.getId());
+                testProject, Arrays.asList(persistedOwner.getId()), persistedOwner.getId(), null);
 
         List<Project> results = projectService.getProjectsByUserId(persistedOwner.getId());
 
