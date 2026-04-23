@@ -38,7 +38,7 @@ public class UserController {
 	@ResponseStatus(HttpStatus.OK)
 	@ResponseBody
 	public List<UserGetDTO> getAllUsers(@RequestHeader(value = "Authorization", required = false) String token) {
-		userService.verifyToken(token);
+		
 		// fetch all users in the internal representation
 		List<User> users = userService.getUsers();
 		List<UserGetDTO> userGetDTOs = new ArrayList<>();
@@ -54,7 +54,7 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public UserGetDTO getUser(@PathVariable("id") Long id, @RequestHeader(value = "Authorization", required = false) String token) {
-        userService.verifyToken(token);
+        
 	    // Standard JPA method: findById returns an Optional
         User user = userService.getUserById(id);
 	    if (user == null) {
@@ -107,7 +107,7 @@ public class UserController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @ResponseBody
     public void logoutUser(@PathVariable("id") Long id, @RequestHeader(value = "Authorization", required = false) String token) {
-        userService.verifyToken(token);
+        
 	    userService.logoutById(id);
     }
 
@@ -115,7 +115,7 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public List<TaskGetDTO> getTasksByUser (@PathVariable("id") Long id, @RequestHeader(value = "Authorization", required = false) String token) {
-        userService.verifyToken(token);
+        
         List<TaskGetDTO> taskGetDTOS = new ArrayList<>();
         // Standard JPA method: findById returns an Optional
         User user = userService.getUserById(id);

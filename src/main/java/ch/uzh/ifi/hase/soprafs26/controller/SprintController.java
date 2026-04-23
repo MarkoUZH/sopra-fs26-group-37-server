@@ -37,7 +37,7 @@ public class SprintController {
                                   @RequestHeader(value = "Authorization", required = false) String token) {
         
         // 1. Verify the token using the userService
-        userService.verifyToken(token);
+        
 
         // 2. Convert the incoming DTO (Data Transfer Object) to a Sprint Entity
         // This keeps your API layer separated from your Database layer
@@ -56,7 +56,7 @@ public class SprintController {
     @ResponseBody
     public List<SprintGetDTO> getAllSprints(@RequestHeader(value = "Authorization", required = false) String token) {
         // 1. Verify token
-        userService.verifyToken(token);
+        
 
         // 2. Get all sprints from service
         List<Sprint> sprints = sprintService.getSprints();
@@ -71,7 +71,7 @@ public class SprintController {
     public SprintGetDTO getSprintById(@PathVariable Long sprintId,
                                      @RequestHeader(value = "Authorization", required = false) String token) {
         // 1. Verify token
-        userService.verifyToken(token);
+        
 
         // 2. Get specific sprint
         Sprint sprint = sprintService.getSprintById(sprintId);
