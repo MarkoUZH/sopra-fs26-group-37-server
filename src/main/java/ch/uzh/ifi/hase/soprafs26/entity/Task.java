@@ -42,7 +42,7 @@ public class Task {
         this.name = name;
         this.description = description;
         this.tags = tags;
-        this.assignedUsers = assignedUsers;
+        this.assignedUsers = assignedUsers != null ? new ArrayList<>(assignedUsers) : new ArrayList<>();
         this.priority = priority;
         this.dueDate = dueDate;
         this.timeEstimate = timeEstimate;
@@ -93,8 +93,14 @@ public class Task {
     }
 
     public void setAssignedUsers(List<User> assignedUsers) {
-        this.assignedUsers = assignedUsers;
+    if (this.assignedUsers == null) {
+        this.assignedUsers = new ArrayList<>();
     }
+    this.assignedUsers.clear();
+    if (assignedUsers != null) {
+        this.assignedUsers.addAll(assignedUsers);
+    }
+}
 
     public Priority getPriority() {
         return priority;
