@@ -13,167 +13,301 @@ import ch.uzh.ifi.hase.soprafs26.constant.UserStatus;
 import ch.uzh.ifi.hase.soprafs26.entity.User;
 import ch.uzh.ifi.hase.soprafs26.repository.UserRepository;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 public class UserServiceTest {
 
-	@Mock
-	private UserRepository userRepository;
+    @Mock
+    private UserRepository userRepository;
 
-	@InjectMocks
-	private UserService userService;
+    @InjectMocks
+    private UserService userService;
 
-	private User testUser;
+    private User testUser;
 
-	@BeforeEach
-	public void setup() {
-		MockitoAnnotations.openMocks(this);
+    @BeforeEach
+    public void setup() {
+        MockitoAnnotations.openMocks(this);
 
-		// given
-		testUser = new User();
-		testUser.setId(1L);
-		testUser.setUsername("testUsername");
+        testUser = new User();
+        testUser.setId(1L);
+        testUser.setUsername("testUsername");
+        testUser.setPassword("testPassword");
+        testUser.setToken("test-token");
+        testUser.setStatus(UserStatus.ONLINE);
+        testUser.setLanguage("EN");
 
-		// when -> any object is being save in the userRepository -> return the dummy
-		// testUser
-		Mockito.when(userRepository.save(Mockito.any())).thenReturn(testUser);
-	}
+        Mockito.when(userRepository.save(Mockito.any())).thenReturn(testUser);
+    }
 
-	@Test
-	public void createUser_validInputs_success() {
-		// when -> any object is being save in the userRepository -> return the dummy
-		// testUser
-		User createdUser = userService.createUser(testUser);
+    @Test
+    public void getUsers_returnsAllUsers() {
+        when(userRepository.findAll()).thenReturn(Arrays.asList(testUser, new User()));
 
-		// then
-		Mockito.verify(userRepository, Mockito.times(1)).save(Mockito.any());
+        List<User> result = userService.getUsers();
 
-		assertEquals(testUser.getId(), createdUser.getId());
-		assertEquals(testUser.getUsername(), createdUser.getUsername());
-		assertNotNull(createdUser.getToken());
-		assertEquals(UserStatus.ONLINE, createdUser.getStatus());
-	}
+        assertEquals(2, result.size());
+        verify(userRepository, times(1)).findAll();
+    }
 
-	@Test
-	public void createUser_duplicateInputs_throwsException() {
-		// given -> a first user has already been created
-		userService.createUser(testUser);
+    @Test
+    public void getUsers_emptyRepository_returnsEmptyList() {
+        when(userRepository.findAll()).thenReturn(List.of());
 
-		// when -> setup additional mocks for UserRepository
-		Mockito.when(userRepository.findByUsername(Mockito.any())).thenReturn(testUser);
+        assertTrue(userService.getUsers().isEmpty());
+    }
 
-		// then -> attempt to create second user with same user -> check that an error
-		// is thrown
-		assertThrows(ResponseStatusException.class, () -> userService.createUser(testUser));
-	}
+    @Test
+    public void createUser_validInputs_success() {
+        User createdUser = userService.createUser(testUser);
 
-	@Test
-	public void loginUser_invalidPassword_throwsException() {
-		// given
-		User existingUser = new User();
-		existingUser.setUsername("testUsername");
-		existingUser.setPassword("correctPassword");
+        verify(userRepository, times(1)).save(Mockito.any());
+        assertEquals(testUser.getId(), createdUser.getId());
+        assertEquals(testUser.getUsername(), createdUser.getUsername());
+        assertNotNull(createdUser.getToken());
+        assertEquals(UserStatus.ONLINE, createdUser.getStatus());
+    }
 
-		User loginAttempt = new User();
-		loginAttempt.setUsername("testUsername");
-		loginAttempt.setPassword("wrongPassword");
+    @Test
+    public void createUser_duplicateUsername_throwsException() {
+        userService.createUser(testUser);
+        when(userRepository.findByUsername(Mockito.any())).thenReturn(testUser);
 
-		// Mock: findByUsername returns the user, but the passwords won't match
-		Mockito.when(userRepository.findByUsername("testUsername")).thenReturn(existingUser);
+        assertThrows(ResponseStatusException.class, () -> userService.createUser(testUser));
+    }
 
-		// then -> attempt to login with wrong password -> check for 401 UNAUTHORIZED
-		ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> {
-			userService.loginUser(loginAttempt);
-		});
+    @Test
+    public void loginUser_validCredentials_success() {
+        testUser.setStatus(UserStatus.OFFLINE);
+        when(userRepository.findByUsername("testUsername")).thenReturn(testUser);
 
-		assertEquals(HttpStatus.UNAUTHORIZED, exception.getStatusCode());
-		assertTrue(exception.getReason().contains("Wrong password"));
-	}
+        User loggedIn = userService.loginUser(testUser);
 
+        assertEquals(UserStatus.ONLINE, loggedIn.getStatus());
+    }
 
-		@Test
-	public void updateUser_validUsername_success() {
-		// given
-		User updates = new User();
-		updates.setUsername("newUsername");
+    @Test
+    public void loginUser_usernameNotFound_throwsNotFound() {
+        when(userRepository.findByUsername("unknown")).thenReturn(null);
 
-		Mockito.when(userRepository.findById(1L)).thenReturn(java.util.Optional.of(testUser));
+        User attempt = new User();
+        attempt.setUsername("unknown");
+        attempt.setPassword("any");
 
-		// when
-		userService.updateUser(1L, updates);
+        ResponseStatusException exception = assertThrows(ResponseStatusException.class,
+                () -> userService.loginUser(attempt));
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
+    }
 
-		// then
-		assertEquals("newUsername", testUser.getUsername());
-		Mockito.verify(userRepository, Mockito.times(1)).save(testUser);
-	}
+    @Test
+    public void loginUser_wrongPassword_throwsUnauthorized() {
+        User stored = new User();
+        stored.setUsername("testUsername");
+        stored.setPassword("correctPassword");
+        when(userRepository.findByUsername("testUsername")).thenReturn(stored);
 
-	@Test
-	public void updateUser_validPassword_success() {
-		// given
-		User updates = new User();
-		updates.setPassword("newSecurePassword");
+        User attempt = new User();
+        attempt.setUsername("testUsername");
+        attempt.setPassword("wrongPassword");
 
-		Mockito.when(userRepository.findById(1L)).thenReturn(java.util.Optional.of(testUser));
+        ResponseStatusException exception = assertThrows(ResponseStatusException.class,
+                () -> userService.loginUser(attempt));
+        assertEquals(HttpStatus.UNAUTHORIZED, exception.getStatusCode());
+        assertTrue(exception.getReason().contains("Wrong password"));
+    }
 
-		// when
-		userService.updateUser(1L, updates);
+    @Test
+    public void getUserById_existingId_returnsUser() {
+        when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
 
-		// then
-		assertEquals("newSecurePassword", testUser.getPassword());
-		Mockito.verify(userRepository, Mockito.times(1)).save(testUser);
-	}
+        User result = userService.getUserById(1L);
 
-	@Test
-	public void updateUser_nonExistentUser_throwsException() {
-		// given
-		Mockito.when(userRepository.findById(99L)).thenReturn(java.util.Optional.empty());
+        assertEquals(testUser.getId(), result.getId());
+    }
 
-		// when / then
-		assertThrows(ResponseStatusException.class, () -> userService.updateUser(99L, new User()));
-	}
+    @Test
+    public void getUserById_nonExistingId_throwsNotFound() {
+        when(userRepository.findById(99L)).thenReturn(Optional.empty());
 
-	//for the token verification. all our services use this now so it better work lol
-	@Test
-    public void verifyToken_validToken_success() {
-        // given
-        String validToken = "valid-token-123";
-        testUser.setToken(validToken);
-        
-        Mockito.when(userRepository.findByToken(validToken)).thenReturn(testUser);
+        ResponseStatusException exception = assertThrows(ResponseStatusException.class,
+                () -> userService.getUserById(99L));
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
+    }
 
-        // when & then: should not throw any exception
-        assertDoesNotThrow(() -> userService.verifyToken(validToken));
+    @Test
+    public void getUserByToken_validToken_returnsUser() {
+        when(userRepository.findByToken("test-token")).thenReturn(testUser);
+
+        User result = userService.getUserByToken("test-token");
+
+        assertEquals(testUser.getId(), result.getId());
+    }
+
+    @Test
+    public void getUserByToken_nullToken_returnsNull() {
+        assertNull(userService.getUserByToken(null));
+        verify(userRepository, never()).findByToken(any());
+    }
+
+    @Test
+    public void getUserByToken_emptyToken_returnsNull() {
+        assertNull(userService.getUserByToken(""));
+        verify(userRepository, never()).findByToken(any());
+    }
+
+    @Test
+    public void verifyToken_validToken_doesNotThrow() {
+        when(userRepository.findByToken("test-token")).thenReturn(testUser);
+
+        assertDoesNotThrow(() -> userService.verifyToken("test-token"));
     }
 
     @Test
     public void verifyToken_invalidToken_throwsUnauthorized() {
-        // given
-        String invalidToken = "wrong-token";
-        Mockito.when(userRepository.findByToken(invalidToken)).thenReturn(null);
+        when(userRepository.findByToken("bad-token")).thenReturn(null);
 
-        // when & then
-        ResponseStatusException exception = assertThrows(ResponseStatusException.class, 
-            () -> userService.verifyToken(invalidToken));
-            
+        ResponseStatusException exception = assertThrows(ResponseStatusException.class,
+                () -> userService.verifyToken("bad-token"));
         assertEquals(HttpStatus.UNAUTHORIZED, exception.getStatusCode());
         assertEquals("Invalid token!", exception.getReason());
     }
 
     @Test
     public void verifyToken_nullToken_throwsUnauthorized() {
-        // given
-        String nullToken = null;
-
-        // when & then
-        ResponseStatusException exception = assertThrows(ResponseStatusException.class, 
-            () -> userService.verifyToken(nullToken));
-            
+        ResponseStatusException exception = assertThrows(ResponseStatusException.class,
+                () -> userService.verifyToken(null));
         assertEquals(HttpStatus.UNAUTHORIZED, exception.getStatusCode());
         assertEquals("Token is missing!", exception.getReason());
     }
 
+    @Test
+    public void verifyToken_emptyToken_throwsUnauthorized() {
+        ResponseStatusException exception = assertThrows(ResponseStatusException.class,
+                () -> userService.verifyToken(""));
+        assertEquals(HttpStatus.UNAUTHORIZED, exception.getStatusCode());
+        assertEquals("Token is missing!", exception.getReason());
+    }
+
+    @Test
+    public void updateUser_validUsername_updatesField() {
+        when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
+
+        User updates = new User();
+        updates.setUsername("newUsername");
+
+        userService.updateUser(1L, updates);
+
+        assertEquals("newUsername", testUser.getUsername());
+        verify(userRepository, times(1)).save(testUser);
+    }
+
+    @Test
+    public void updateUser_validPassword_updatesField() {
+        when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
+
+        User updates = new User();
+        updates.setPassword("newPassword");
+
+        userService.updateUser(1L, updates);
+
+        assertEquals("newPassword", testUser.getPassword());
+        verify(userRepository, times(1)).save(testUser);
+    }
+
+    @Test
+    public void updateUser_validLanguage_updatesField() {
+        when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
+
+        User updates = new User();
+        updates.setLanguage("FR");
+
+        userService.updateUser(1L, updates);
+
+        assertEquals("FR", testUser.getLanguage());
+        verify(userRepository, times(1)).save(testUser);
+    }
+
+    @Test
+    public void updateUser_nullFields_existingValuesPreserved() {
+        when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
+
+        // All fields null/empty — nothing should be overwritten
+        userService.updateUser(1L, new User());
+
+        assertEquals("testUsername", testUser.getUsername());
+        assertEquals("testPassword", testUser.getPassword());
+    }
+
+    @Test
+    public void updateUser_nonExistingId_throwsNotFound() {
+        when(userRepository.findById(99L)).thenReturn(Optional.empty());
+
+        ResponseStatusException exception = assertThrows(ResponseStatusException.class,
+                () -> userService.updateUser(99L, new User()));
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
+    }
+
+    @Test
+    public void updateUserLanguage_validToken_updatesLanguage() {
+        when(userRepository.findByToken("test-token")).thenReturn(testUser);
+        when(userRepository.save(testUser)).thenReturn(testUser);
+
+        User result = userService.updateUserLanguage("test-token", "DE");
+
+        assertEquals("DE", result.getLanguage());
+        verify(userRepository, times(1)).save(testUser);
+    }
+
+    @Test
+    public void updateUserLanguage_invalidToken_throwsNotFound() {
+        when(userRepository.findByToken("bad-token")).thenReturn(null);
+
+        ResponseStatusException exception = assertThrows(ResponseStatusException.class,
+                () -> userService.updateUserLanguage("bad-token", "DE"));
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
+    }
 
 
+    @Test
+    public void setUserStatus_validToken_setsOffline() {
+        when(userRepository.findByToken("test-token")).thenReturn(testUser);
 
+        userService.setUserStatus("test-token");
 
+        assertEquals(UserStatus.OFFLINE, testUser.getStatus());
+        verify(userRepository, times(1)).save(testUser);
+    }
+
+    @Test
+    public void setUserStatus_unknownToken_doesNothing() {
+        when(userRepository.findByToken("unknown")).thenReturn(null);
+
+        // Should not throw — method guards with null check
+        assertDoesNotThrow(() -> userService.setUserStatus("unknown"));
+        verify(userRepository, never()).save(any());
+    }
+
+    @Test
+    public void logoutById_validId_setsOffline() {
+        when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
+
+        userService.logoutById(1L);
+
+        assertEquals(UserStatus.OFFLINE, testUser.getStatus());
+        verify(userRepository, times(1)).save(testUser);
+    }
+
+    @Test
+    public void logoutById_nonExistingId_throwsNotFound() {
+        when(userRepository.findById(99L)).thenReturn(Optional.empty());
+
+        ResponseStatusException exception = assertThrows(ResponseStatusException.class,
+                () -> userService.logoutById(99L));
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
+    }
 }
