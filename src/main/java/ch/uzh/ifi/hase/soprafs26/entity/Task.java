@@ -38,16 +38,15 @@ public class Task {
     @Column(nullable = false)
     private TaskStatus status = TaskStatus.TODO;
 
-    public Task(String name, String description, List<Tag> tags, List<User> assignedUsers, Priority priority, LocalDateTime dueDate, float timeEstimate, String originalLanguage,  Project project, TaskStatus status) {
+    public Task(String name, String description, List<Tag> tags, List<User> assignedUsers, Priority priority, LocalDateTime dueDate, float timeEstimate, String originalLanguage, Project project, TaskStatus status) {
         this.name = name;
         this.description = description;
         this.tags = tags;
-        this.assignedUsers = assignedUsers;
+        this.assignedUsers = assignedUsers != null ? new ArrayList<>(assignedUsers) : new ArrayList<>();
         this.priority = priority;
         this.dueDate = dueDate;
         this.timeEstimate = timeEstimate;
         this.originalLanguage = originalLanguage;
-        this.sprint = sprint;
         this.project = project;
         this.status = status;
     }
@@ -93,8 +92,14 @@ public class Task {
     }
 
     public void setAssignedUsers(List<User> assignedUsers) {
-        this.assignedUsers = assignedUsers;
+    if (this.assignedUsers == null) {
+        this.assignedUsers = new ArrayList<>();
     }
+    this.assignedUsers.clear();
+    if (assignedUsers != null) {
+        this.assignedUsers.addAll(assignedUsers);
+    }
+}
 
     public Priority getPriority() {
         return priority;

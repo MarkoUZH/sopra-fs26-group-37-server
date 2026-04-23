@@ -28,7 +28,7 @@ public class TranslationController {
     @RequestBody Map<String, String> request,
     @RequestHeader(value = "Authorization", required = false) String token 
     ) {
-        //userService.verifyToken(token);
+        //
 
         String text = request.get("text");
         String targetLang = request.get("language"); // Your frontend currently sends 'language'

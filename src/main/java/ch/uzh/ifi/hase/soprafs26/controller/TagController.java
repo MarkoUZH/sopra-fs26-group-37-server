@@ -30,7 +30,7 @@ public class TagController {
     public List<TagGetDTO> getAllTags(
             @RequestHeader(value = "Authorization", required = false) String token) {
 
-        userService.verifyToken(token);
+        
 
         return tagService.getTags().stream()
                 .map(TagDTOMapper.INSTANCE::convertEntityToTagGetDTO)
@@ -44,7 +44,7 @@ public class TagController {
             @RequestHeader(value = "Authorization", required = false) String token,
             @PathVariable Long id) {
 
-        userService.verifyToken(token);
+        
 
         Tag tag = tagService.getTagById(id);
         return TagDTOMapper.INSTANCE.convertEntityToTagGetDTO(tag);
@@ -57,7 +57,7 @@ public class TagController {
             @RequestHeader(value = "Authorization", required = false) String token,
             @RequestBody TagPostDTO tagPostDTO) {
 
-        userService.verifyToken(token);
+        
 
         Tag tag = TagDTOMapper.INSTANCE.convertTagPostDTOtoEntity(tagPostDTO);
         Tag createdTag = tagService.createTag(tag);
@@ -72,7 +72,7 @@ public class TagController {
             @PathVariable Long id,
             @RequestBody TagPostDTO tagPostDTO) {
 
-        userService.verifyToken(token);
+        
 
         Tag tag = TagDTOMapper.INSTANCE.convertTagPostDTOtoEntity(tagPostDTO);
         Tag updatedTag = tagService.updateTag(id, tag);
@@ -85,7 +85,7 @@ public class TagController {
             @RequestHeader(value = "Authorization", required = false) String token,
             @PathVariable Long id) {
 
-        userService.verifyToken(token);
+        
 
         return TagDTOMapper.INSTANCE.convertEntityToTagGetDTO(tagService.deleteTag(id));
     }
