@@ -101,5 +101,5 @@ public class TaskGetDTO {
     public String getOriginalLanguage() {
         return originalLanguage;
     }
-    public void setOriginalLanguage(String originalLanguage) {}
+    public void setOriginalLanguage(String originalLanguage) {this.originalLanguage = originalLanguage;}
 }

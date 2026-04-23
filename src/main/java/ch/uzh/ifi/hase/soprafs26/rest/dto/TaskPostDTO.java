@@ -14,6 +14,8 @@ public class TaskPostDTO {
     private LocalDateTime dueDate;
     private float timeEstimate;
     private Long projectId;
+    private String originalLanguage;
+
     public String getName() {
         return name;
     }
@@ -79,4 +81,11 @@ public class TaskPostDTO {
         this.projectId = projectId;
     }
 
+    public String getOriginalLanguage() {
+        return originalLanguage;
+    }
+
+    public void setOriginalLanguage(String originalLanguage) {
+        this.originalLanguage = originalLanguage;
+    }
 }

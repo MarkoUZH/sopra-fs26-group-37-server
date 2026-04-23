@@ -25,6 +25,7 @@ public interface TaskDTOMapper {
     @Mapping(source = "timeEstimate", target = "timeEstimate")
     @Mapping(source = "project", target = "project")
     @Mapping(source = "status", target = "status")
+    @Mapping(source = "originalLanguage", target = "originalLanguage")
     TaskGetDTO convertEntityToTaskGetDTO(Task task);
 
     @Mapping(source = "name", target = "name")
@@ -46,6 +47,7 @@ public interface TaskDTOMapper {
     @Mapping(source = "timeEstimate", target = "timeEstimate")
     @Mapping(source = "tagIds", target = "tags", qualifiedByName = "idsToTags")
     @Mapping(source = "assignedUserIds", target = "assignedUsers", qualifiedByName = "idsToUsers")
+    @Mapping(source = "originalLanguage", target = "originalLanguage")
     Task convertTaskPutDTOtoEntity(TaskPutDTO taskPutDTO);
 
     @Named("tagsToIds")

@@ -15,6 +15,8 @@ public class TaskPutDTO {
     private LocalDateTime dueDate;
     private float timeEstimate;
     private TaskStatus status;
+    private String originalLanguage;
+
     public Long getId() {
         return id;
     }
@@ -85,5 +87,11 @@ public class TaskPutDTO {
             this.status = status;
         }
 
-  
+    public String getOriginalLanguage() {
+        return originalLanguage;
+    }
+
+    public void setOriginalLanguage(String originalLanguage) {
+        this.originalLanguage = originalLanguage;
+    }
 }
