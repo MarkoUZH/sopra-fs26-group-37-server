@@ -74,7 +74,9 @@ public class TaskDTO {
     public String getOriginalLanguage() {
         return originalLanguage;
     }
-    public void setOriginalLanguage(String originalLanguage) {}
+    public void setOriginalLanguage(String originalLanguage) {
+        this.originalLanguage = originalLanguage;
+    }
 
     public List<UserGetDTO> getAssignedUsers() {
         return assignedUsers;
