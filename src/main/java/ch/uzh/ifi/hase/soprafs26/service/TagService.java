@@ -66,7 +66,6 @@ public class TagService {
         log.debug("Deleting tag with id {}", id);
         Tag deletedTag = getTagById(id);
         tagRepository.deleteById(id);
-        tagRepository.flush();
 
         return deletedTag;
     }
