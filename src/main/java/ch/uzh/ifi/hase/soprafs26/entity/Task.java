@@ -38,7 +38,7 @@ public class Task {
     @Column(nullable = false)
     private TaskStatus status = TaskStatus.TODO;
 
-    public Task(String name, String description, List<Tag> tags, List<User> assignedUsers, Priority priority, LocalDateTime dueDate, float timeEstimate, String originalLanguage, Project project, TaskStatus status) {
+    public Task(String name, String description, List<Tag> tags, List<User> assignedUsers, Priority priority, LocalDateTime dueDate, float timeEstimate, String originalLanguage, Project project, TaskStatus status, Sprint sprint) {
         this.name = name;
         this.description = description;
         this.tags = tags;
@@ -49,6 +49,7 @@ public class Task {
         this.originalLanguage = originalLanguage;
         this.project = project;
         this.status = status;
+        this.sprint = sprint;
     }
 
     public Task() {
@@ -148,4 +149,11 @@ public class Task {
     public void setOriginalLanguage(String originalLanguage) {
         this.originalLanguage = originalLanguage;
     }
+    public Sprint getSprint() {
+    return sprint;
+}
+
+public void setSprint(Sprint sprint) {
+    this.sprint = sprint;
+}
 }

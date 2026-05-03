@@ -2,6 +2,7 @@ package ch.uzh.ifi.hase.soprafs26.rest.dto;
 
 import ch.uzh.ifi.hase.soprafs26.constant.Priority;
 import ch.uzh.ifi.hase.soprafs26.constant.TaskStatus;
+import ch.uzh.ifi.hase.soprafs26.entity.Sprint;
 import java.util.List;
 import java.time.LocalDateTime;
 
@@ -15,6 +16,7 @@ public class TaskDTO {
     private List<UserGetDTO> assignedUsers;
     private TaskStatus status;
     private String originalLanguage;
+    private Long sprintId;
 
     public Long getId() {
         return id;
@@ -84,5 +86,13 @@ public class TaskDTO {
 
     public void setAssignedUsers(List<UserGetDTO> assignedUsers) {
         this.assignedUsers = assignedUsers;
+    }
+
+    public Long getSprintId() {
+        return sprintId;
+    }
+
+    public void setSprintId(Long sprintId) {
+        this.sprintId = sprintId;
     }
 }
