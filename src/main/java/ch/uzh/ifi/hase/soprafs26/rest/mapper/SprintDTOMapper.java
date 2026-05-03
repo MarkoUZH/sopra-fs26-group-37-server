@@ -9,7 +9,7 @@ import org.mapstruct.factory.Mappers;
 import java.util.List;
 
 
-@Mapper
+@Mapper(imports = { ch.uzh.ifi.hase.soprafs26.constant.TaskStatus.class })
 public interface SprintDTOMapper {
 
     SprintDTOMapper INSTANCE = Mappers.getMapper(SprintDTOMapper.class);
@@ -21,6 +21,8 @@ public interface SprintDTOMapper {
 
     @Mapping(source = "project.id", target = "projectId")
 	@Mapping(source = "project.name", target = "projectName") // Add this!
+    @Mapping(target = "totalTasks", expression = "java(sprint.getTasks() != null ? sprint.getTasks().size() : 0)")
+    @Mapping(target = "completedTasks", expression = "java(sprint.getTasks() != null ? (int) sprint.getTasks().stream().filter(t -> t.getStatus() == TaskStatus.DONE).count() : 0)")
 	SprintGetDTO convertEntityToSprintDTO(Sprint sprint);
 	List<SprintGetDTO> convertEntitiesToSprintDTOs(List<Sprint> sprints);
 

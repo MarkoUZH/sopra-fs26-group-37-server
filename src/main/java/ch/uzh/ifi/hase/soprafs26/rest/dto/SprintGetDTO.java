@@ -12,6 +12,10 @@ public class SprintGetDTO {
     private Date endTime;
     private Long projectId;
     private String projectName;
+    private int totalTasks;
+    private int completedTasks;
+
+// Getters and Setters...
 
      public Long getProjectId() {
         return projectId;
@@ -63,4 +67,18 @@ public class SprintGetDTO {
 
     public String getProjectName() { return projectName; }
     public void setProjectName(String projectName) { this.projectName = projectName; }
+
+    public int getTotalTasks() {
+        return totalTasks;
+    }
+    public void setTotalTasks(int totalTasks) {
+        this.totalTasks = totalTasks;
+    }
+    public int getCompletedTasks() {
+        return completedTasks;
+    }
+    public void setCompletedTasks(int completedTasks) {
+        this.completedTasks = completedTasks;   
+    }
+
 }
