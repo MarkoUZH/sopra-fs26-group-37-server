@@ -6,16 +6,20 @@ import ch.uzh.ifi.hase.soprafs26.entity.User;
 import ch.uzh.ifi.hase.soprafs26.repository.TagRepository;
 import ch.uzh.ifi.hase.soprafs26.repository.TaskRepository;
 import ch.uzh.ifi.hase.soprafs26.repository.UserRepository;
+import ch.uzh.ifi.hase.soprafs26.rest.dto.TaskMessage;
+import ch.uzh.ifi.hase.soprafs26.rest.mapper.TaskDTOMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -28,16 +32,19 @@ public class TaskService {
     private final UserRepository userRepository;
     private final TagRepository tagRepository;
     private final UserService userService;
+    private final SimpMessagingTemplate messagingTemplate;
+
 
     @Autowired
-    public TaskService(@Qualifier("taskRepository") TaskRepository taskRepository, 
-                       @Qualifier("userRepository") UserRepository userRepository, 
+    public TaskService(@Qualifier("taskRepository") TaskRepository taskRepository,
+                       @Qualifier("userRepository") UserRepository userRepository,
                        @Qualifier("tagRepository") TagRepository tagRepository,
-                       @Qualifier("userService") UserService userService) {
+                       @Qualifier("userService") UserService userService, SimpMessagingTemplate messagingTemplate) {
         this.taskRepository = taskRepository;
         this.userRepository = userRepository;
         this.tagRepository = tagRepository;
         this.userService = userService;
+        this.messagingTemplate = messagingTemplate;
     }
 
     // --- RESTORED CORE METHODS FOR CONTROLLER ---
@@ -52,6 +59,7 @@ public class TaskService {
 
     public void deleteTaskById(Long id) {
         taskRepository.deleteById(id);
+        broadcast("task_deleted", Map.of("id", id));
     }
 
     // --- CREATE LOGIC WITH TAG CONNECTION ---
@@ -73,7 +81,10 @@ public class TaskService {
             }
         }
 
-        return taskRepository.save(task);
+        Task createdTask = taskRepository.save(task);
+        broadcast("task_created", TaskDTOMapper.INSTANCE.convertEntityToTaskGetDTO(createdTask));
+
+        return createdTask;
     }
 
     // --- UPDATE LOGIC WITH TAG CONNECTION ---
@@ -114,6 +125,13 @@ public class TaskService {
             }
         }
 
-        return taskRepository.save(existingTask);
+        Task updatedTask = taskRepository.save(existingTask);
+        broadcast("task_updated", TaskDTOMapper.INSTANCE.convertEntityToTaskGetDTO(updatedTask));
+
+        return updatedTask;
+    }
+
+    private void broadcast(String type, Object payload) {
+        messagingTemplate.convertAndSend("/topic/tasks", new TaskMessage(type, payload));
     }
 }
