@@ -205,7 +205,7 @@ public class TaskControllerTest {
     }
 
     @Test
-    public void updateProject_validInput_projectUpdated() throws Exception {
+    public void updateTask_validInput_taskUpdated() throws Exception {
         // given
         Task task = new Task();
         task.setId(1L);

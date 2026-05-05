@@ -4,10 +4,13 @@ import ch.uzh.ifi.hase.soprafs26.entity.Project;
 import ch.uzh.ifi.hase.soprafs26.repository.ProjectRepository;
 import ch.uzh.ifi.hase.soprafs26.repository.UserRepository;
 
+import ch.uzh.ifi.hase.soprafs26.rest.dto.ProjectMessage;
+import ch.uzh.ifi.hase.soprafs26.rest.mapper.ProjectDTOMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,6 +21,7 @@ import ch.uzh.ifi.hase.soprafs26.service.UserService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -28,11 +32,13 @@ public class ProjectService {
 
 	private final ProjectRepository projectRepository;
     private final UserService userService;
+    private final SimpMessagingTemplate messagingTemplate;
 
-	public ProjectService(@Qualifier("projectRepository") ProjectRepository projectRepository, @Qualifier("userService") UserService UserService) {
+    public ProjectService(@Qualifier("projectRepository") ProjectRepository projectRepository, @Qualifier("userService") UserService UserService, SimpMessagingTemplate messagingTemplate) {
 		this.projectRepository = projectRepository;
         this.userService = UserService;
-	}
+        this.messagingTemplate = messagingTemplate;
+    }
 
     public List<Project> getProjects()
     {
@@ -40,22 +46,27 @@ public class ProjectService {
     }
 
     public Project createProject(Project project, List<Long> memberIds, Long ownerId, String originalLanguage)
-    {if (ownerId != null) {
-        User owner = userService.getUserById(ownerId);
-        project.setOwner(owner);
-    }
-
-    // 2. Link the Members
-    if (memberIds != null && !memberIds.isEmpty()) {
-        List<User> members = new ArrayList<>();
-        for (Long id : memberIds) {
-            User member = userService.getUserById(id);
-            members.add(member);
+        {if (ownerId != null) {
+            User owner = userService.getUserById(ownerId);
+            project.setOwner(owner);
         }
-        project.setMembers(members);
-    }
-    project.setOriginalLanguage(originalLanguage);
-    return projectRepository.save(project);
+
+        // 2. Link the Members
+        if (memberIds != null && !memberIds.isEmpty()) {
+            List<User> members = new ArrayList<>();
+            for (Long id : memberIds) {
+                User member = userService.getUserById(id);
+                members.add(member);
+            }
+            project.setMembers(members);
+        }
+        project.setOriginalLanguage(originalLanguage);
+
+        Project savedProject = projectRepository.save(project);
+
+        broadcast("project_created", ProjectDTOMapper.INSTANCE.convertEntityToProjectGetDTO(savedProject));
+
+        return savedProject;
     }
 
     public Optional<Project> getProjectById(Long id)
@@ -66,6 +77,7 @@ public class ProjectService {
     public void deleteProjectById(Long id)
     {
         projectRepository.deleteById(id);
+        broadcast("project_deleted", Map.of("id", id));
     }
 
     public Project updateProject(Long id, Project projectInput, List<Long> memberIds) {
@@ -85,7 +97,11 @@ public class ProjectService {
         existingProject.setMembers(members);
     }
 
-    return projectRepository.save(existingProject);
+        Project updatedProject = projectRepository.save(existingProject);
+
+        broadcast("project_updated", ProjectDTOMapper.INSTANCE.convertEntityToProjectGetDTO(updatedProject));
+
+        return updatedProject;
 }
     public List<Project> getProjectsByUserId(Long userId) {
         User user = userService.getUserById(userId);
@@ -106,5 +122,9 @@ public class ProjectService {
         }
         
         return allProjects;
+    }
+
+    private void broadcast(String type, Object payload) {
+        messagingTemplate.convertAndSend("/topic/projects", new ProjectMessage(type, payload));
     }
 }

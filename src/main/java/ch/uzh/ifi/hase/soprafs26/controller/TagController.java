@@ -8,6 +8,7 @@ import ch.uzh.ifi.hase.soprafs26.service.UserService;
 
 import ch.uzh.ifi.hase.soprafs26.entity.Tag;
 import ch.uzh.ifi.hase.soprafs26.service.TagService;
+import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -81,12 +82,13 @@ public class TagController {
 
     @DeleteMapping("/tags/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Transactional
     public TagGetDTO deleteTag(
             @RequestHeader(value = "Authorization", required = false) String token,
             @PathVariable Long id) {
 
-        
+        Tag deletedTag = tagService.deleteTag(id);
 
-        return TagDTOMapper.INSTANCE.convertEntityToTagGetDTO(tagService.deleteTag(id));
+        return TagDTOMapper.INSTANCE.convertEntityToTagGetDTO(deletedTag);
     }
 }
