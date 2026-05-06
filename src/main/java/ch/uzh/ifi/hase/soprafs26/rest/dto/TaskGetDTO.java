@@ -2,7 +2,6 @@ package ch.uzh.ifi.hase.soprafs26.rest.dto;
 
 import ch.uzh.ifi.hase.soprafs26.constant.Priority;
 import ch.uzh.ifi.hase.soprafs26.constant.TaskStatus;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -18,6 +17,7 @@ public class TaskGetDTO {
     private ProjectDTO project;
     private TaskStatus status;
     private String originalLanguage;
+    private Long sprintId;
 
     public Long getId() {
         return id;
@@ -101,5 +101,14 @@ public class TaskGetDTO {
     public String getOriginalLanguage() {
         return originalLanguage;
     }
-    public void setOriginalLanguage(String originalLanguage) {this.originalLanguage = originalLanguage;}
+    public void setOriginalLanguage(String originalLanguage) 
+    {this.originalLanguage = originalLanguage;}
+    
+    public Long getSprintId() {
+        return sprintId;
+    }
+
+    public void setSprintId(Long sprintId) {
+        this.sprintId = sprintId;
+    }
 }

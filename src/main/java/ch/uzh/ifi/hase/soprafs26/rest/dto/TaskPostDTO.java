@@ -15,6 +15,7 @@ public class TaskPostDTO {
     private float timeEstimate;
     private Long projectId;
     private String originalLanguage;
+    private Long sprintId;
 
     public String getName() {
         return name;
@@ -87,5 +88,13 @@ public class TaskPostDTO {
 
     public void setOriginalLanguage(String originalLanguage) {
         this.originalLanguage = originalLanguage;
+    }
+
+    public Long getSprintId() {
+        return sprintId;
+    }
+
+    public void setSprintId(Long sprintId) {
+        this.sprintId = sprintId;
     }
 }

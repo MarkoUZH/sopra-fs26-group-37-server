@@ -15,6 +15,9 @@ import java.util.List;
 public interface TaskDTOMapper {
 	TaskDTOMapper INSTANCE = Mappers.getMapper(TaskDTOMapper.class);
 
+    @Mapping(source = "sprint.id", target = "sprintId")
+    TaskDTO convertEntityToTaskDTO(Task task);
+
     @Mapping(source = "id", target = "id")
     @Mapping(source = "name", target = "name")
     @Mapping(source = "description", target = "description")
@@ -26,6 +29,7 @@ public interface TaskDTOMapper {
     @Mapping(source = "project", target = "project")
     @Mapping(source = "originalLanguage", target = "originalLanguage")
     @Mapping(source = "status", target = "status")
+    @Mapping(source = "sprint.id", target = "sprintId")
     TaskGetDTO convertEntityToTaskGetDTO(Task task);
 
     @Mapping(source = "name", target = "name")
@@ -37,6 +41,7 @@ public interface TaskDTOMapper {
     @Mapping(source = "projectId", target = "project.id")
     @Mapping(source = "tagIds", target = "tags", qualifiedByName = "idsToTags")
     @Mapping(source = "assignedUserIds", target = "assignedUsers", qualifiedByName = "idsToUsers")
+    @Mapping(source = "sprintId", target = "sprint.id")
     Task convertTaskPostDTOtoEntity(TaskPostDTO taskPostDTO);
 
     @Mapping(source = "id", target = "id")

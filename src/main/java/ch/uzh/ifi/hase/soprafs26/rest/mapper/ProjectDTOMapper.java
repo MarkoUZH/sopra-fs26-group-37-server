@@ -9,10 +9,9 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
-
 import java.util.List;
 
-@Mapper
+@Mapper(uses = { TaskDTOMapper.class })
 public interface ProjectDTOMapper {
 	ProjectDTOMapper INSTANCE = Mappers.getMapper(ProjectDTOMapper.class);
 
