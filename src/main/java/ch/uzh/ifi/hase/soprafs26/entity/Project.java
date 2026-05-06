@@ -13,12 +13,12 @@ public class Project {
     private String name;
     private String description;
     private String originalLanguage;
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Task> tasks;
     @ManyToOne
     @JoinColumn(name = "owner_id")
     private User owner;
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "project_members",
             joinColumns = @JoinColumn(name = "project_id"),
@@ -26,10 +26,10 @@ public class Project {
     )
     private List<User> members;
 
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Sprint> sprints;
 
-    @OneToMany(mappedBy = "project")
+    @OneToMany(mappedBy = "project", fetch = FetchType.EAGER)
     private List<Tag> tags;
 
 

@@ -15,9 +15,9 @@ public class Task {
     private Long id;
     private String name;
     private String description;
-    @ManyToMany(mappedBy = "tasks", fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "tasks", fetch = FetchType.EAGER)
     private List<Tag> tags;
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "task_assigned_users",
             joinColumns = @JoinColumn(name = "task_id"),
@@ -29,9 +29,9 @@ public class Task {
     private LocalDateTime dueDate;
     private float timeEstimate;
     private String originalLanguage;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     private Sprint sprint;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "project_id")
     private Project project;
     @Enumerated(EnumType.STRING)
