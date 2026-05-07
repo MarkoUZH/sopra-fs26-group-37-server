@@ -12,6 +12,7 @@ public class UserGetDTO {
 	private String token;
 	private String language;
 	private boolean manager;
+	private boolean autoTranslate;
 
 
 	public Long getId() {
@@ -20,6 +21,14 @@ public class UserGetDTO {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public boolean getAutoTranslate() {
+		return autoTranslate;
+	}
+
+	public void setAutoTranslate(boolean autoTranslate) {
+		this.autoTranslate = autoTranslate;
 	}
 
 	public String getEmail() {

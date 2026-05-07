@@ -61,6 +61,9 @@ public class User implements Serializable {
     @Column(nullable = false)
     private boolean manager;
 
+    @Column(nullable = false)
+    private boolean autoTranslate = true; //set default to true, can be changed by user
+
     public Long getId() {
         return id;
     }
