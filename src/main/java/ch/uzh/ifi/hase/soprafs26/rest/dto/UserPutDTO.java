@@ -5,6 +5,7 @@ public class UserPutDTO {
     private String password;
     private String name;
     private String language;
+    private boolean autoTranslate;
 
     public String getUsername() { return username; }
     public void setUsername(String username) { this.username = username; }
@@ -17,4 +18,7 @@ public class UserPutDTO {
 
     public String getLanguage() { return language; }
     public void setLanguage(String language) { this.language = language; }
+
+    public boolean getAutoTranslate() { return autoTranslate; }
+    public void setAutoTranslate(boolean autoTranslate) { this.autoTranslate = autoTranslate; }
 }

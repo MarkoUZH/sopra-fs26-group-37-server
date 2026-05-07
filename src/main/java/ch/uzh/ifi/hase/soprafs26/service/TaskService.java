@@ -3,6 +3,8 @@ package ch.uzh.ifi.hase.soprafs26.service;
 import ch.uzh.ifi.hase.soprafs26.entity.Tag;
 import ch.uzh.ifi.hase.soprafs26.entity.Task;
 import ch.uzh.ifi.hase.soprafs26.entity.User;
+import ch.uzh.ifi.hase.soprafs26.repository.ProjectRepository;
+import ch.uzh.ifi.hase.soprafs26.repository.SprintRepository;
 import ch.uzh.ifi.hase.soprafs26.repository.TagRepository;
 import ch.uzh.ifi.hase.soprafs26.repository.TaskRepository;
 import ch.uzh.ifi.hase.soprafs26.repository.UserRepository;
@@ -17,6 +19,8 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+
+
 
 import java.util.List;
 import java.util.Map;
@@ -33,18 +37,22 @@ public class TaskService {
     private final TagRepository tagRepository;
     private final UserService userService;
     private final SimpMessagingTemplate messagingTemplate;
+    private final ProjectRepository projectRepository;
+    private final SprintRepository sprintRepository;
 
 
     @Autowired
     public TaskService(@Qualifier("taskRepository") TaskRepository taskRepository,
                        @Qualifier("userRepository") UserRepository userRepository,
                        @Qualifier("tagRepository") TagRepository tagRepository,
-                       @Qualifier("userService") UserService userService, SimpMessagingTemplate messagingTemplate) {
+                       @Qualifier("userService") UserService userService, SimpMessagingTemplate messagingTemplate, @Qualifier("projectRepository") ProjectRepository projectRepository, @Qualifier("sprintRepository") SprintRepository sprintRepository) {
         this.taskRepository = taskRepository;
         this.userRepository = userRepository;
         this.tagRepository = tagRepository;
         this.userService = userService;
         this.messagingTemplate = messagingTemplate;
+        this.projectRepository = projectRepository;
+        this.sprintRepository = sprintRepository;
     }
 
     // --- RESTORED CORE METHODS FOR CONTROLLER ---
@@ -79,6 +87,16 @@ public class TaskService {
                     tag.getTasks().add(task);
                 }
             }
+        }
+
+            // Link to Project
+        if (task.getProjectId() != null) {
+            projectRepository.findById(task.getProjectId()).ifPresent(task::setProject);
+        }
+    
+        // Link to Sprint
+        if (task.getSprintId() != null) {
+            sprintRepository.findById(task.getSprintId()).ifPresent(task::setSprint);
         }
 
         Task createdTask = taskRepository.save(task);

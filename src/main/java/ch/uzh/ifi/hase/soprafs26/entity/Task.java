@@ -156,4 +156,19 @@ public class Task {
 public void setSprint(Sprint sprint) {
     this.sprint = sprint;
 }
+
+    @Transient
+    private Long projectId;
+
+    @Transient
+    private Long sprintId;
+
+    // --- ADD THESE GETTERS AND SETTERS ---
+    public Long getProjectId() { return projectId; }
+    public void setProjectId(Long projectId) { this.projectId = projectId; }
+
+    public Long getSprintId() { return sprintId; }
+    public void setSprintId(Long sprintId) { this.sprintId = sprintId; }
+
+
 }
