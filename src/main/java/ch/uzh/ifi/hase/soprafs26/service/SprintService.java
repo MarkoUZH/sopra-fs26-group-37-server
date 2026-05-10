@@ -73,6 +73,8 @@ public Sprint updateSprint(Long sprintId, Sprint updatedSprint) {
 
 public void deleteSprint(Long sprintId) {
     Sprint existingSprint = getSprintById(sprintId);
+    existingSprint.setProject(null);
+    existingSprint.getTasks().forEach(task -> task.setSprint(null));
     sprintRepository.delete(existingSprint);
 }
 
