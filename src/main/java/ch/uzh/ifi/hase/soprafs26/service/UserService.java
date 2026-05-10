@@ -158,11 +158,17 @@ public class UserService {
 	 * @see User
 	 */
 	private void checkIfUserExists(User userToBeCreated) {
-		User userByUsername = userRepository.findByUsername(userToBeCreated.getUsername());
-		String baseErrorMessage = "The %s provided %s not unique. Therefore, the user could not be created!";
-		if (userByUsername != null) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-					String.format(baseErrorMessage, "username and the name", "are"));
-		} 
-	}
+        User userByUsername = userRepository.findByUsername(userToBeCreated.getUsername());
+        User userByEmail = userRepository.findByEmail(userToBeCreated.getEmail());
+
+        if (userByUsername != null) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                    String.format("The username provided is not unique. Therefore, the user could not be created!"));
+        }
+
+        if (userByEmail != null) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                    String.format("The email provided is not unique. Therefore, the user could not be created!"));
+        }
+    }
 }
