@@ -16,6 +16,7 @@ public interface TaskDTOMapper {
 	TaskDTOMapper INSTANCE = Mappers.getMapper(TaskDTOMapper.class);
 
     @Mapping(source = "sprint.id", target = "sprintId")
+    @Mapping(source = "tags", target = "tags")
     TaskDTO convertEntityToTaskDTO(Task task);
 
     @Mapping(source = "id", target = "id")
