@@ -29,9 +29,9 @@ public class Task {
     private LocalDateTime dueDate;
     private float timeEstimate;
     private String originalLanguage;
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER,  cascade = CascadeType.DETACH)
     private Sprint sprint;
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER, cascade =   CascadeType.DETACH)
     @JoinColumn(name = "project_id")
     private Project project;
     @Enumerated(EnumType.STRING)
