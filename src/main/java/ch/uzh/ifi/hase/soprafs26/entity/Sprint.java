@@ -18,9 +18,9 @@ public class Sprint {
     private SprintStatus sprintStatus;
     private Date startTime;
     private Date endTime;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     private Project project;
-    @OneToMany(mappedBy = "sprint", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "sprint", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Task> tasks = new ArrayList<>();
 
     public Sprint() {

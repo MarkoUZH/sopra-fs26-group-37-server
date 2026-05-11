@@ -58,7 +58,12 @@ public class TaskService {
     }
 
     public void deleteTaskById(Long id) {
-        taskRepository.deleteById(id);
+        Task taskToDelete = taskRepository.findById(id).orElse(null);
+        taskToDelete.setSprint(null);
+        taskToDelete.setAssignedUsers(null);
+        taskToDelete.setProject(null);
+        taskRepository.save(taskToDelete);
+        taskRepository.delete(taskToDelete);
         broadcast("task_deleted", Map.of("id", id));
     }
 
