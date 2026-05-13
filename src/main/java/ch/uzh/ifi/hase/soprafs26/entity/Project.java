@@ -29,8 +29,8 @@ public class Project {
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Sprint> sprints;
 
-    @OneToMany(mappedBy = "project", fetch = FetchType.EAGER)
-    private List<Tag> tags;
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private List<Tag> tags; 
 
 
     public Project() {

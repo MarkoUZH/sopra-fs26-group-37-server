@@ -21,6 +21,7 @@ public interface ProjectDTOMapper {
     @Mapping(source = "memberIds", target = "members", qualifiedByName = "idsToMembers")
     Project convertProjectPostDTOtoEntity(ProjectPostDTO projectPostDTO);
 
+    @Mapping(source = "originalLanguage", target = "originalLanguage")
     @Mapping(source = "id", target = "id")
     @Mapping(source = "name", target = "name")
     @Mapping(source = "description", target = "description")
@@ -29,7 +30,6 @@ public interface ProjectDTOMapper {
     @Mapping(source = "sprints", target = "sprints")
     @Mapping(source = "tags", target = "tags")
     @Mapping(source = "tasks", target = "tasks")
-    @Mapping(source = "originalLanguage", target = "originalLanguage")
     ProjectGetDTO convertEntityToProjectGetDTO(Project project);
 
     @Mapping(source = "name", target = "name")
