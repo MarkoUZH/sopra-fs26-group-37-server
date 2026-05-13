@@ -30,13 +30,13 @@ private static final String API_URL = "https://router.huggingface.co/v1/chat/com
         // Replace "uzh-org-name" with your actual Org slug on Hugging Face
         headers.set("X-HF-Bill-To", "UZHedu"); 
 
-        Map<String, Object> body = new HashMap<>();
+        Map<String, Object> body = new HashMap<>(); 
         // Use :fastest to let the router pick the best provider (Groq, Together, etc.)
-        body.put("model", "Qwen/Qwen2.5-7B-Instruct:fastest");
+        body.put("model", "openai/gpt-oss-120b");
         
         body.put("messages", List.of(
             Map.of("role", "system", "content", 
-                String.format("You are a professional translator. Translate from %s to %s. Output ONLY the translated text.", sourceLang, targetLang)),
+                String.format("You are a professional translator. Translate from %s to %s. Output ONLY the translated text. If the text is already in %s, just output it as is.", sourceLang, targetLang, targetLang)),
             Map.of("role", "user", "content", text)
         ));
         
