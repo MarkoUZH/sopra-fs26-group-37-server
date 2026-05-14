@@ -1,11 +1,7 @@
 package ch.uzh.ifi.hase.soprafs26.service;
 
-import ch.uzh.ifi.hase.soprafs26.entity.Tag;
-import ch.uzh.ifi.hase.soprafs26.entity.Task;
-import ch.uzh.ifi.hase.soprafs26.entity.User;
-import ch.uzh.ifi.hase.soprafs26.repository.TagRepository;
-import ch.uzh.ifi.hase.soprafs26.repository.TaskRepository;
-import ch.uzh.ifi.hase.soprafs26.repository.UserRepository;
+import ch.uzh.ifi.hase.soprafs26.entity.*;
+import ch.uzh.ifi.hase.soprafs26.repository.*;
 import ch.uzh.ifi.hase.soprafs26.rest.dto.TaskMessage;
 import ch.uzh.ifi.hase.soprafs26.rest.mapper.TaskDTOMapper;
 import org.slf4j.Logger;
@@ -31,6 +27,7 @@ public class TaskService {
     private final TaskRepository taskRepository;
     private final UserRepository userRepository;
     private final TagRepository tagRepository;
+    private final ProjectRepository projectRepository;
     private final UserService userService;
     private final SimpMessagingTemplate messagingTemplate;
 
@@ -38,11 +35,12 @@ public class TaskService {
     @Autowired
     public TaskService(@Qualifier("taskRepository") TaskRepository taskRepository,
                        @Qualifier("userRepository") UserRepository userRepository,
-                       @Qualifier("tagRepository") TagRepository tagRepository,
+                       @Qualifier("tagRepository") TagRepository tagRepository, ProjectRepository projectRepository,
                        @Qualifier("userService") UserService userService, SimpMessagingTemplate messagingTemplate) {
         this.taskRepository = taskRepository;
         this.userRepository = userRepository;
         this.tagRepository = tagRepository;
+        this.projectRepository = projectRepository;
         this.userService = userService;
         this.messagingTemplate = messagingTemplate;
     }
@@ -82,6 +80,19 @@ public class TaskService {
             for (Tag tag : realTags) {
                 if (!tag.getTasks().contains(task)) {
                     tag.getTasks().add(task);
+                }
+            }
+        }
+
+        //System.out.println(task.getProject().getName());
+
+        if (task.getSprint().getId() == null) {
+            Project project = projectRepository.findById(task.getProject().getId()).orElse(null);
+            if (project != null) {
+                for (Sprint sprint : project.getSprints()) {
+                    if (sprint.getName().equals("Backlog")) {
+                        task.setSprint(sprint);
+                    }
                 }
             }
         }

@@ -1,7 +1,10 @@
 package ch.uzh.ifi.hase.soprafs26.service;
 
+import ch.uzh.ifi.hase.soprafs26.constant.SprintStatus;
 import ch.uzh.ifi.hase.soprafs26.entity.Project;
+import ch.uzh.ifi.hase.soprafs26.entity.Sprint;
 import ch.uzh.ifi.hase.soprafs26.repository.ProjectRepository;
+import ch.uzh.ifi.hase.soprafs26.repository.SprintRepository;
 import ch.uzh.ifi.hase.soprafs26.repository.UserRepository;
 
 import ch.uzh.ifi.hase.soprafs26.rest.dto.ProjectMessage;
@@ -13,16 +16,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.server.ResponseStatusException;
 
 import ch.uzh.ifi.hase.soprafs26.entity.User;
 import ch.uzh.ifi.hase.soprafs26.service.UserService;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.time.Instant;
+import java.time.temporal.TemporalUnit;
+import java.util.*;
 
 @Service
 @Transactional
@@ -33,11 +37,13 @@ public class ProjectService {
 	private final ProjectRepository projectRepository;
     private final UserService userService;
     private final SimpMessagingTemplate messagingTemplate;
+    private final SprintRepository sprintRepository;
 
-    public ProjectService(@Qualifier("projectRepository") ProjectRepository projectRepository, @Qualifier("userService") UserService UserService, SimpMessagingTemplate messagingTemplate) {
+    public ProjectService(@Qualifier("projectRepository") ProjectRepository projectRepository, @Qualifier("userService") UserService UserService, SimpMessagingTemplate messagingTemplate, SprintRepository sprintRepository) {
 		this.projectRepository = projectRepository;
         this.userService = UserService;
         this.messagingTemplate = messagingTemplate;
+        this.sprintRepository = sprintRepository;
     }
 
     public List<Project> getProjects()
@@ -62,9 +68,16 @@ public class ProjectService {
         }
         project.setOriginalLanguage(originalLanguage);
 
+        createInitialSprint(project);
+
         Project savedProject = projectRepository.save(project);
 
-        broadcast("project_created", ProjectDTOMapper.INSTANCE.convertEntityToProjectGetDTO(savedProject));
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                broadcast("project_created", ProjectDTOMapper.INSTANCE.convertEntityToProjectGetDTO(savedProject));
+            }
+        });
 
         return savedProject;
     }
@@ -126,5 +139,16 @@ public class ProjectService {
 
     private void broadcast(String type, Object payload) {
         messagingTemplate.convertAndSend("/topic/projects", new ProjectMessage(type, payload));
+    }
+
+    private void createInitialSprint(Project project) {
+        Sprint backlog = new Sprint();
+        backlog.setName("Backlog");
+        backlog.setStartTime(Date.from(Instant.now()));
+        backlog.setEndTime(Date.from(Instant.now().plusSeconds(31536000)));
+        backlog.setSprintStatus(SprintStatus.ACTIVE);
+        backlog.setProject(project);
+
+        sprintRepository.save(backlog);
     }
 }
