@@ -2,7 +2,9 @@ package ch.uzh.ifi.hase.soprafs26.service;
 
 import ch.uzh.ifi.hase.soprafs26.entity.Project;
 import ch.uzh.ifi.hase.soprafs26.entity.Sprint;
+import ch.uzh.ifi.hase.soprafs26.repository.ProjectRepository;
 import ch.uzh.ifi.hase.soprafs26.repository.SprintRepository;
+import org.apache.coyote.BadRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -18,19 +20,18 @@ import java.util.List;
 public class SprintService {
 
     private final SprintRepository sprintRepository;
-    
-   
-    private final ProjectService projectService;
+
+    private final ProjectRepository projectRepository;
 
     
-    public SprintService(@Qualifier("sprintRepository") SprintRepository sprintRepository, 
-                         ProjectService projectService) {
+    public SprintService(@Qualifier("sprintRepository") SprintRepository sprintRepository,
+                         ProjectRepository projectRepository) {
         this.sprintRepository = sprintRepository;
-        this.projectService = projectService;
+        this.projectRepository = projectRepository;
     }
 
     public Sprint createSprint(Sprint newSprint, Long projectId) {
-        Project project = projectService.getProjectById(projectId)
+        Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Project not found"));
         newSprint.setProject(project);
         return sprintRepository.save(newSprint);
@@ -73,6 +74,9 @@ public Sprint updateSprint(Long sprintId, Sprint updatedSprint) {
 
 public void deleteSprint(Long sprintId) {
     Sprint existingSprint = getSprintById(sprintId);
+    if (existingSprint.getName().equals("Backlog")){
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Backlog can't be deleted!");
+    }
     existingSprint.setProject(null);
     existingSprint.getTasks().forEach(task -> task.setSprint(null));
     sprintRepository.delete(existingSprint);
